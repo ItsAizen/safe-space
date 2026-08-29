@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const memory: Memory = {
     id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+    createdAt: body.createdAt ?? new Date().toISOString(),
     title: String(body.title ?? ''),
     description: String(body.description ?? ''),
     song: body.song ? String(body.song) : undefined,
@@ -59,5 +59,24 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ source: 'kv', memory });
   } catch {
     return json({ source: 'local', memory });
+  }
+};
+
+export const DELETE: APIRoute = async ({ url }) => {
+  const id = url.searchParams.get('id');
+  if (!id) return json({ source: 'local', error: 'missing id' });
+
+  if (!kvEnabled()) {
+    return json({ source: 'local', id });
+  }
+
+  try {
+    const list = (await kv.lrange(KV_KEY, 0, -1)) as Memory[];
+    const filtered = list.filter((m) => m.id !== id);
+    await kv.del(KV_KEY);
+    if (filtered.length) await kv.rpush(KV_KEY, ...filtered);
+    return json({ source: 'kv', id });
+  } catch {
+    return json({ source: 'local', id });
   }
 };

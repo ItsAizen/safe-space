@@ -7,8 +7,8 @@
 >
   <div class="mb-10 text-center">
     <div
-      class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl border border-line"
-      style="box-shadow: 0 0 40px var(--color-glow);"
+      class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl border"
+      style="border-color: var(--glass-border); box-shadow: 0 0 44px var(--color-glow);"
     >
       <span class="text-3xl">🌿</span>
     </div>
@@ -16,29 +16,33 @@
     <p class="mt-1 text-sm text-ink-soft">ورود به فضای اختصاصی</p>
   </div>
 
-  <div class="mb-9 flex items-center gap-4" id="pin-dots">
+  <div class="mb-10 flex items-center gap-4" id="pin-dots">
     <span class="pin-dot"></span>
     <span class="pin-dot"></span>
     <span class="pin-dot"></span>
     <span class="pin-dot"></span>
   </div>
 
-  <div class="grid grid-cols-3 gap-4">
-    <button class="pin-key" data-val="1">۱</button>
-    <button class="pin-key" data-val="2">۲</button>
-    <button class="pin-key" data-val="3">۳</button>
-    <button class="pin-key" data-val="4">۴</button>
-    <button class="pin-key" data-val="5">۵</button>
-    <button class="pin-key" data-val="6">۶</button>
-    <button class="pin-key" data-val="7">۷</button>
-    <button class="pin-key" data-val="8">۸</button>
-    <button class="pin-key" data-val="9">۹</button>
-    <button class="pin-key" aria-label="delete" data-val="del">⌫</button>
-    <button class="pin-key" data-val="0">۰</button>
+  <div dir="ltr" class="grid grid-cols-3 gap-4">
+    <button class="pin-key" data-val="1">1</button>
+    <button class="pin-key" data-val="2">2</button>
+    <button class="pin-key" data-val="3">3</button>
+    <button class="pin-key" data-val="4">4</button>
+    <button class="pin-key" data-val="5">5</button>
+    <button class="pin-key" data-val="6">6</button>
+    <button class="pin-key" data-val="7">7</button>
+    <button class="pin-key" data-val="8">8</button>
+    <button class="pin-key" data-val="9">9</button>
     <button class="pin-key pointer-events-none opacity-0" tabindex="-1" aria-hidden="true">·</button>
+    <button class="pin-key" data-val="0">0</button>
+    <button class="pin-key" aria-label="delete" data-val="del">
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 5L9 17M9 5l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
   </div>
 
-  <p class="mt-8 text-xs text-ink-soft">برای باز کردن، کد ۴ رقمی را وارد کن</p>
+  <p class="mt-9 text-xs text-ink-soft">برای باز کردن، کد ۴ رقمی را وارد کن</p>
 </section>
 
 <script>

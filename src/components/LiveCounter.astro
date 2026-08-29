@@ -1,11 +1,16 @@
 ---
 const milestoneLabel = '۱ شهریور ۱۴۰۵';
 ---
-<section id="live-counter" class="glass mx-0 mt-1 rounded-3xl p-5">
+<section
+  id="live-counter"
+  class="glass mx-0 mt-1 rounded-[28px] p-5"
+  style="background: radial-gradient(120% 80% at 50% 0%, var(--color-glow), transparent 62%), var(--glass-bg);"
+>
   <div class="mb-4 flex items-center justify-between">
     <h2 class="text-sm font-bold text-ink">فرکانس مشترک از {milestoneLabel}</h2>
     <span
-      class="flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1 text-[11px] text-ink-soft"
+      class="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px]"
+      style="background: var(--glass-bg-2); color: var(--color-ink-soft);"
     >
       <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-mint"></span>
       زنده
@@ -13,20 +18,20 @@ const milestoneLabel = '۱ شهریور ۱۴۰۵';
   </div>
 
   <div class="grid grid-cols-4 gap-2">
-    <div class="flex flex-col items-center rounded-2xl bg-surface-2 py-3">
-      <span data-days class="text-2xl font-bold tabular-nums text-mint">۰</span>
+    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
+      <span data-days class="neon-mint text-2xl font-bold tabular-nums">۰</span>
       <span class="mt-1 text-[11px] text-ink-soft">روز</span>
     </div>
-    <div class="flex flex-col items-center rounded-2xl bg-surface-2 py-3">
-      <span data-hours class="text-2xl font-bold tabular-nums text-mint">۰۰</span>
+    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
+      <span data-hours class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
       <span class="mt-1 text-[11px] text-ink-soft">ساعت</span>
     </div>
-    <div class="flex flex-col items-center rounded-2xl bg-surface-2 py-3">
-      <span data-minutes class="text-2xl font-bold tabular-nums text-mint">۰۰</span>
+    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
+      <span data-minutes class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
       <span class="mt-1 text-[11px] text-ink-soft">دقیقه</span>
     </div>
-    <div class="flex flex-col items-center rounded-2xl bg-surface-2 py-3">
-      <span data-seconds class="text-2xl font-bold tabular-nums text-mint">۰۰</span>
+    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
+      <span data-seconds class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
       <span class="mt-1 text-[11px] text-ink-soft">ثانیه</span>
     </div>
   </div>

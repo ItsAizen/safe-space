@@ -2,10 +2,12 @@
 ---
 <button
   id="fab"
-  class="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-mint px-5 py-3.5 text-sm font-bold text-mint-ink shadow-[0_10px_30px_-6px_var(--color-glow)]"
+  aria-label="ثبت خاطره جدید"
+  class="fab fixed bottom-[calc(env(safe-area-inset-bottom,0px)+22px)] left-1/2 z-30 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full"
 >
-  <span class="text-xl leading-none">＋</span>
-  <span>ثبت خاطره جدید</span>
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+    <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
 </button>
 
 <div
@@ -15,8 +17,8 @@
 
 <div
   id="add-drawer"
-  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden w-full max-w-[430px] rounded-t-3xl border-t border-line bg-canvas p-5 pb-8 safe-bottom"
-  style="box-shadow: 0 -20px 60px -20px rgba(0, 0, 0, 0.6);"
+  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden w-full max-w-[430px] rounded-t-3xl p-5 pb-8 safe-bottom"
+  style="background: var(--color-canvas); border-top: 1px solid var(--glass-border); box-shadow: 0 -24px 70px -24px rgba(0, 0, 0, 0.65);"
 >
   <div class="mb-4 flex items-center justify-between">
     <h3 class="text-base font-bold text-ink">ثبت خاطره جدید</h3>
@@ -53,6 +55,26 @@
         placeholder="🎵 Haal Naram - Amin Tijay"
       />
     </label>
+
+    <div class="grid grid-cols-2 gap-3">
+      <label class="flex flex-col gap-1.5">
+        <span class="text-xs text-ink-soft">تاریخ</span>
+        <input
+          name="date"
+          type="date"
+          class="rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-ink outline-none focus:border-mint [color-scheme:light]"
+        />
+      </label>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-xs text-ink-soft">ساعت</span>
+        <input
+          name="time"
+          type="time"
+          class="rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-ink outline-none focus:border-mint [color-scheme:light]"
+        />
+      </label>
+    </div>
+    <p id="date-preview" class="text-[11px] text-ink-soft"></p>
 
     <div>
       <span class="mb-2 block text-xs text-ink-soft">حس مهرداد</span>
