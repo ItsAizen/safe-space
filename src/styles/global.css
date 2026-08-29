@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'SafeSpace';
+  src: url('/fonts/font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SafeSpace';
+  src: url('/fonts/font-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-canvas: #0b0d10;
+  --color-canvas-2: #07090b;
+  --color-surface: rgba(255, 255, 255, 0.045);
+  --color-surface-2: rgba(255, 255, 255, 0.08);
+  --color-ink: #e9edf1;
+  --color-ink-soft: #98a1ab;
+  --color-mint: #34d399;
+  --color-mint-soft: #6ee7b7;
+  --color-border: rgba(110, 231, 183, 0.16);
+  --color-glow: rgba(52, 211, 153, 0.22);
+  --color-danger: #f87171;
+  --shadow-card: 0 10px 40px -12px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+html.light {
+  --color-canvas: #f2ede4;
+  --color-canvas-2: #e9e2d6;
+  --color-surface: #ffffff;
+  --color-surface-2: #fbf7f0;
+  --color-ink: #2a2a2e;
+  --color-ink-soft: #70706f;
+  --color-mint: #0ea372;
+  --color-mint-soft: #34d399;
+  --color-border: rgba(14, 163, 114, 0.22);
+  --color-glow: rgba(14, 163, 114, 0.16);
+  --shadow-card: 0 12px 36px -14px rgba(60, 50, 30, 0.28);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'SafeSpace', 'Vazirmatn', Tahoma, system-ui, sans-serif;
+  background: var(--color-canvas-2);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 50% 0%, var(--color-glow), transparent 70%),
+    radial-gradient(40% 40% at 80% 90%, var(--color-glow), transparent 70%);
+  opacity: 0.7;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--color-canvas);
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  box-shadow: 0 0 80px -10px var(--color-glow);
+  overflow: hidden;
+}
+
+.ambient-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-dot {
+  position: absolute;
+  border-radius: 999px;
+  background: var(--color-mint);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+@media (min-width: 480px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-shell {
+    min-height: 92dvh;
+    margin-top: 4dvh;
+    margin-bottom: 4dvh;
+    border-radius: 34px;
+    border: 1px solid var(--color-border);
+  }
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.glass {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid var(--color-border);
+  transition: all 0.25s ease;
+}
+
+.pin-dot-filled {
+  background: var(--color-mint);
+  border-color: var(--color-mint);
+  box-shadow: 0 0 14px var(--color-glow);
+}
+
+.pin-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 24px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  user-select: none;
+}
+
+.pin-key:active {
+  background: var(--color-surface-2);
+}
+
+.mood-chip-active {
+  background: var(--color-surface-2);
+  border-color: var(--color-mint);
+  color: var(--color-mint);
+  box-shadow: 0 0 16px var(--color-glow);
+  opacity: 1 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-ink-soft);
+  opacity: 0.7;
+}

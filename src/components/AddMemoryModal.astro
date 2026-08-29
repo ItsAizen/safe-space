@@ -1,0 +1,97 @@
+---
+---
+<button
+  id="fab"
+  class="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-mint px-5 py-3.5 text-sm font-bold text-mint-ink shadow-[0_10px_30px_-6px_var(--color-glow)]"
+>
+  <span class="text-xl leading-none">＋</span>
+  <span>ثبت خاطره جدید</span>
+</button>
+
+<div
+  id="add-backdrop"
+  class="fixed inset-0 z-40 hidden bg-black/50 opacity-0 safe-top safe-bottom"
+></div>
+
+<div
+  id="add-drawer"
+  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden w-full max-w-[430px] rounded-t-3xl border-t border-line bg-canvas p-5 pb-8 safe-bottom"
+  style="box-shadow: 0 -20px 60px -20px rgba(0, 0, 0, 0.6);"
+>
+  <div class="mb-4 flex items-center justify-between">
+    <h3 class="text-base font-bold text-ink">ثبت خاطره جدید</h3>
+    <button id="add-cancel" class="text-sm text-ink-soft">بستن</button>
+  </div>
+
+  <form id="add-form" class="flex flex-col gap-4">
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs text-ink-soft">عنوان</span>
+      <input
+        name="title"
+        type="text"
+        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
+        placeholder="مثلاً: قدم زدن کنار دریا"
+      />
+    </label>
+
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs text-ink-soft">توضیحات</span>
+      <textarea
+        name="description"
+        rows="3"
+        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
+        placeholder="اون لحظه چطور بود؟"
+      ></textarea>
+    </label>
+
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs text-ink-soft">اسم آهنگ (اختیاری)</span>
+      <input
+        name="song"
+        type="text"
+        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
+        placeholder="🎵 Haal Naram - Amin Tijay"
+      />
+    </label>
+
+    <div>
+      <span class="mb-2 block text-xs text-ink-soft">حس مهرداد</span>
+      <div id="mehrdad-moods" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <div>
+      <span class="mb-2 block text-xs text-ink-soft">حس سوگل</span>
+      <div id="sogol-moods" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <div>
+      <span class="mb-2 block text-xs text-ink-soft">ثبت توسط</span>
+      <div class="flex gap-3">
+        <label
+          class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink has-[:checked]:border-mint has-[:checked]:text-mint"
+        >
+          <input type="radio" name="author" value="mehrdad" checked class="accent-mint" />
+          مهرداد
+        </label>
+        <label
+          class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink has-[:checked]:border-mint has-[:checked]:text-mint"
+        >
+          <input type="radio" name="author" value="sogol" class="accent-mint" />
+          سوگل
+        </label>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="mt-1 rounded-2xl bg-mint py-3.5 text-sm font-bold text-mint-ink"
+    >
+      ثبت خاطره
+    </button>
+  </form>
+</div>
+
+<script>
+  import { initAddModal } from '../lib/modal';
+  initAddModal();
+</script>

@@ -1,0 +1,20 @@
+{
+  "name": "safe-space",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.18",
+    "@astrojs/tailwind": "^5.1.4",
+    "@astrojs/vercel": "^7.8.2",
+    "tailwindcss": "^3.4.17",
+    "@vercel/kv": "^1.0.1",
+    "gsap": "^3.12.5"
+  }
+}

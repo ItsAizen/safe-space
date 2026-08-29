@@ -1,0 +1,24 @@
+# build output
+dist/
+.vercel/
+.astro/
+node_modules/
+
+# logs
+*.log
+npm-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# os
+.DS_Store
+Thumbs.db
+
+# fonts (binary, not committed)
+public/fonts/*.ttf
+public/fonts/*.otf
+public/fonts/*.woff
+public/fonts/*.woff2

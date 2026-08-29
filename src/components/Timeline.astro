@@ -1,0 +1,22 @@
+---
+---
+<section class="mt-7">
+  <div class="mb-3 flex items-center gap-2 px-1">
+    <span class="h-2 w-2 rounded-full bg-mint" style="box-shadow: 0 0 10px var(--color-glow)"></span>
+    <h2 class="text-sm font-bold text-ink">تایم‌لاین خاطرات دوطرفه</h2>
+  </div>
+
+  <div id="timeline-list" class="flex flex-col gap-4"></div>
+
+  <p
+    id="timeline-empty"
+    class="rounded-3xl border border-dashed border-line p-8 text-center text-sm text-ink-soft"
+  >
+    هنوز خاطره‌ای ثبت نشده. اولین لحظه را با دکمه پایین ثبت کن.
+  </p>
+</section>
+
+<script>
+  import { initTimeline } from '../lib/timeline';
+  initTimeline();
+</script>

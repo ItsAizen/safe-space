@@ -1,0 +1,20 @@
+{
+  "name": "Safe Space",
+  "short_name": "Safe Space",
+  "description": "فضای اختصاصی و مشترک مهرداد و سوگل",
+  "dir": "rtl",
+  "lang": "fa",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d10",
+  "theme_color": "#0b0d10",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

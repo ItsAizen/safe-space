@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PinLock from '../components/PinLock.astro';
+import LiveCounter from '../components/LiveCounter.astro';
+import Timeline from '../components/Timeline.astro';
+import AddMemoryModal from '../components/AddMemoryModal.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+---
+
+<Layout>
+  <PinLock />
+
+  <main id="app" class="relative z-10 hidden flex min-h-[100dvh] flex-col px-4 pb-28 pt-3">
+    <header class="flex items-center justify-between py-3">
+      <div>
+        <h1 class="text-lg font-bold text-ink">Safe Space</h1>
+        <p class="text-[11px] text-ink-soft">فضای اختصاصی مهرداد و سوگل</p>
+      </div>
+      <ThemeToggle />
+    </header>
+
+    <LiveCounter />
+    <Timeline />
+  </main>
+
+  <AddMemoryModal />
+</Layout>
+
+<script>
+  import { initTheme } from '../lib/theme';
+  import { initParticles } from '../lib/particles';
+
+  initTheme();
+  initParticles();
+</script>
