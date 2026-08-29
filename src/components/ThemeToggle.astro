@@ -1,37 +1,54 @@
 ---
 ---
+
 <button
   id="theme-toggle"
+  class="btn btn-ghost relative p-2 rounded-xl focus-ring"
   aria-label="تغییر تم"
-  class="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink"
+  aria-pressed="false"
+  type="button"
 >
-  <svg
-    id="icon-moon"
-    class="h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path
-      d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    ></path>
+  <span class="sr-only">تغییر بین حالت روز و شب</span>
+  <svg class="sun-icon w-5 h-5 text-[var(--color-text-muted)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(0deg) scale(1); opacity: 1;">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
   </svg>
-  <svg
-    id="icon-sun"
-    class="hidden h-5 w-5"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <circle cx="12" cy="12" r="4"></circle>
-    <path
-      d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    ></path>
+  <svg class="moon-icon absolute top-2 left-2 w-5 h-5 text-[var(--color-accent)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate(-90deg) scale(0); opacity: 0;">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
   </svg>
+  <div class="toggle-track absolute inset-2 bg-[var(--color-border)] rounded-[inherit] transition-all duration-500" aria-hidden="true">
+    <div class="toggle-thumb absolute top-0.5 left-0.5 w-4 h-4 bg-[var(--color-accent)] rounded-full shadow-[0_2px_8px_rgba(16,185,129,0.4)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" style="transform: translateX(0);" aria-hidden="true"></div>
+  </div>
 </button>
+
+<script type="module" src="/scripts/theme-toggle.js"></script>
+
+<style>
+  #theme-toggle {
+    width: 56px;
+    height: 40px;
+  }
+
+  .toggle-track {
+    width: 100%;
+    height: 100%;
+  }
+
+  .toggle-thumb {
+    width: 30px;
+    height: 30px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sun-icon, .moon-icon, .toggle-thumb, .toggle-track {
+      transition: none !important;
+    }
+  }
+</style>

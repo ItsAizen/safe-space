@@ -1,43 +1,70 @@
 ---
-const milestoneLabel = '۱ شهریور ۱۴۰۵';
 ---
-<section
-  id="live-counter"
-  class="glass mx-0 mt-1 rounded-[28px] p-5"
-  style="background: radial-gradient(120% 80% at 50% 0%, var(--color-glow), transparent 62%), var(--glass-bg);"
->
-  <div class="mb-4 flex items-center justify-between">
-    <h2 class="text-sm font-bold text-ink">فرکانس مشترک از {milestoneLabel}</h2>
-    <span
-      class="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px]"
-      style="background: var(--glass-bg-2); color: var(--color-ink-soft);"
-    >
-      <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-mint"></span>
-      زنده
-    </span>
+
+<div id="live-counter" class="glass-lg p-6 rounded-2xl relative overflow-hidden" aria-live="polite" aria-label="روزشمار زنده از ۱ شهریور ۱۴۰۵">
+  <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 via-transparent to-[var(--color-accent)]/5" aria-hidden="true"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--color-accent)_0%,_transparent_70%)] opacity-20" aria-hidden="true"></div>
+
+  <header class="relative mb-6">
+    <h2 class="text-heading font-semibold text-[var(--color-text)] flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse-glow" aria-hidden="true"></span>
+      فرکانس مشترک از ۱ شهریور ۱۴۰۵
+    </h2>
+  </header>
+
+  <div class="grid grid-cols-4 gap-3 relative" role="timer">
+    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="days">
+      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="روز">0</div>
+      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">روز</div>
+      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+    </div>
+    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="hours">
+      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="ساعت">00</div>
+      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">ساعت</div>
+      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+    </div>
+    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="minutes">
+      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="دقیقه">00</div>
+      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">دقیقه</div>
+      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+    </div>
+    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="seconds">
+      <div class="counter-value text-display-md font-bold text-[var(--color-accent)] tabular-nums" data-value="0" aria-label="ثانیه">00</div>
+      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">ثانیه</div>
+      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/30 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+    </div>
   </div>
 
-  <div class="grid grid-cols-4 gap-2">
-    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
-      <span data-days class="neon-mint text-2xl font-bold tabular-nums">۰</span>
-      <span class="mt-1 text-[11px] text-ink-soft">روز</span>
-    </div>
-    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
-      <span data-hours class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
-      <span class="mt-1 text-[11px] text-ink-soft">ساعت</span>
-    </div>
-    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
-      <span data-minutes class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
-      <span class="mt-1 text-[11px] text-ink-soft">دقیقه</span>
-    </div>
-    <div class="flex flex-col items-center rounded-2xl py-3" style="background: var(--glass-bg-2);">
-      <span data-seconds class="neon-mint text-2xl font-bold tabular-nums">۰۰</span>
-      <span class="mt-1 text-[11px] text-ink-soft">ثانیه</span>
+  <div class="mt-6 pt-4 border-t border-[var(--color-border)] relative flex items-center justify-between">
+    <span class="text-micro text-[var(--color-text-subtle)]">به‌روزرسانی لحظه‌ای</span>
+    <div class="flex items-center gap-1.5" aria-hidden="true">
+      <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse-glow"></span>
+      <span class="text-micro text-[var(--color-accent)] font-medium">ZIND</span>
     </div>
   </div>
-</section>
+</div>
 
-<script>
-  import { initLiveCounter } from '../lib/counter';
-  initLiveCounter();
-</script>
+<script type="module" src="/scripts/live-counter.js"></script>
+
+<style>
+  .counter-value {
+    transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), color 150ms ease;
+  }
+
+  .counter-value.animate-scale-in {
+    transform: scale(1.1);
+    color: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .counter-value {
+      transition: none !important;
+    }
+    .counter-value.animate-scale-in {
+      transform: none !important;
+    }
+    .animate-pulse-glow {
+      animation: none !important;
+    }
+  }
+</style>

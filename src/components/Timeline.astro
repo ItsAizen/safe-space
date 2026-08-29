@@ -1,26 +1,142 @@
 ---
+const { memories, onDelete } = Astro.props;
 ---
-<section class="mt-7">
-  <div class="mb-3 flex items-center gap-2 px-1">
-    <span class="h-2 w-2 rounded-full bg-mint" style="box-shadow: 0 0 12px var(--color-glow)"></span>
-    <h2 class="text-sm font-bold text-ink">تایم‌لاین خاطرات دوطرفه</h2>
-  </div>
 
-  <div class="relative">
-    <div class="timeline-rail"></div>
-    <div id="timeline-list" class="flex flex-col gap-4"></div>
-  </div>
+<div id="timeline" class="relative" role="list" aria-label="تایم‌لاین خاطرات">
+  <div class="timeline-connector hidden lg:block" aria-hidden="true"></div>
 
-  <p
-    id="timeline-empty"
-    class="mt-4 rounded-3xl border border-dashed p-8 text-center text-sm"
-    style="border-color: var(--glass-border); color: var(--color-ink-soft);"
-  >
-    هنوز خاطره‌ای ثبت نشده. اولین لحظه را با دکمه پایین ثبت کن.
-  </p>
-</section>
+  <div class="space-y-6 relative">
+    {memories.length === 0 && (
+      <div class="glass-lg p-12 rounded-2xl text-center relative z-10" role="status">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[var(--color-accent)]/10 flex items-center justify-center">
+          <svg class="w-8 h-8 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3 class="text-heading font-semibold text-[var(--color-text)]">هنوز خاطره‌ای ثبت نشده</h3>
+        <p class="mt-2 text-body text-[var(--color-text-muted)]">اولین خاطره مشترک‌تان را بسازید</p>
+      </div>
+    )}
+
+    {memories.map((memory, index) => (
+      <article
+        class="timeline-card glass-lg rounded-2xl overflow-hidden relative group animate-fade-in"
+        style={{ animationDelay: `${index * 80}ms` }}
+        data-id={memory.id}
+        role="listitem"
+      >
+        <div class="absolute inset-y-0 right-6 w-0.5 bg-gradient-to-b from-transparent via-[var(--color-border)] to-transparent" aria-hidden="true">
+          {index === memories.length - 1 && (
+            <div class="absolute bottom-0 right-[-3px] w-7 h-7 rounded-full bg-[var(--color-accent)] border-2 border-[var(--color-bg-elevated)] shadow-[0_0_12px_rgba(16,185,129,0.4)]" aria-hidden="true"></div>
+          )}
+        </div>
+
+        <div class="relative p-5 pr-14">
+          <header class="flex items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <time class="text-micro font-medium text-[var(--color-accent)] px-2.5 py-1 rounded-full glass border border-[var(--color-border)] whitespace-nowrap" datetime={memory.date}>
+                {memory.time} - {memory.date}
+              </time>
+              <span class="text-micro font-medium px-2.5 py-1 rounded-full glass border border-[var(--color-border)] text-[var(--color-text-muted)] whitespace-nowrap">
+                ثبت توسط {memory.author === 'mehrdad' ? 'مهرداد' : 'سوگل'}
+              </span>
+            </div>
+            <button
+              type="button"
+              class="btn btn-ghost p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity focus-ring"
+              data-delete={memory.id}
+              aria-label={`حذف خاطره: ${memory.title}`}
+            >
+              <svg class="w-5 h-5 text-[var(--color-text-subtle)] hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </header>
+
+          <h3 class="text-heading font-semibold text-[var(--color-text)] mb-2">{memory.title}</h3>
+          <p class="text-body text-[var(--color-text-muted)] mb-4 leading-relaxed">{memory.description}</p>
+
+          {memory.song && (
+            <div class="flex items-center gap-2 text-body-sm text-[var(--color-text-muted)] mb-4">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-[var(--color-accent)] animate-pulse-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 18V5l12-2v13"></path>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <circle cx="18" cy="16" r="3"></circle>
+                </svg>
+                <span>{memory.song}</span>
+              </span>
+            </div>
+          )}
+
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="mood-badge glass px-3 py-1.5 rounded-full border border-[var(--color-border)] flex items-center gap-1.5">
+              <span class="text-body-sm" aria-hidden="true">😎</span>
+              <span class="text-body-sm font-medium text-[var(--color-text)]">مهرداد: {memory.moodMehrdad}</span>
+            </span>
+            <span class="mood-badge glass px-3 py-1.5 rounded-full border border-[var(--color-border)] flex items-center gap-1.5">
+              <span class="text-body-sm" aria-hidden="true">🐺</span>
+              <span class="text-body-sm font-medium text-[var(--color-text)]">سوگل: {memory.moodSogol}</span>
+            </span>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</div>
 
 <script>
-  import { initTimeline } from '../lib/timeline';
-  initTimeline();
+  (() => {
+    const container = document.getElementById('timeline');
+    if (!container) return;
+
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-delete]');
+      if (btn) {
+        const id = btn.dataset.delete;
+        if (id && confirm('آیا مطمئنید می‌خواهید این خاطره حذف شود؟')) {
+          const event = new CustomEvent('memory-delete', { detail: { id } });
+          document.dispatchEvent(event);
+        }
+      }
+    });
+  })();
 </script>
+
+<style>
+  .timeline-card {
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, border-color 200ms ease;
+  }
+
+  .timeline-card:hover {
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-glass-lg);
+    border-color: var(--color-border-strong);
+  }
+
+  .mood-badge {
+    transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mood-badge:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 12px var(--color-accent-glow);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-card, .mood-badge {
+      transition: none !important;
+    }
+    .timeline-card:hover {
+      transform: none !important;
+    }
+    .animate-fade-in {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+  }
+</style>

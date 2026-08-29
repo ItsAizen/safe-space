@@ -7,29 +7,57 @@ import AddMemoryModal from '../components/AddMemoryModal.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 ---
 
-<Layout>
+<Layout title="Safe Space" description="فضای اختصاصی و امن برای دو نفر">
   <PinLock />
 
-  <main id="app" class="relative z-10 hidden flex min-h-[100dvh] flex-col px-4 pb-28 pt-3">
-    <header class="flex items-center justify-between py-3">
-      <div>
-        <h1 class="text-lg font-bold text-ink">Safe Space</h1>
-        <p class="text-[11px] text-ink-soft">فضای اختصاصی مهرداد و سوگل</p>
-      </div>
-      <ThemeToggle />
-    </header>
+  <header class="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)] bg-[var(--color-bg-elevated)]/80 backdrop-blur-glass sticky top-0 z-20">
+    <h1 class="text-heading font-bold text-[var(--color-text)] tracking-tight">Safe Space</h1>
+    <ThemeToggle />
+  </header>
 
-    <LiveCounter />
-    <Timeline />
-  </main>
+  <div class="flex-1 overflow-y-auto scrollbar-thin" id="app-content" hidden>
+    <div class="p-4 pb-28 space-y-4">
+      <LiveCounter />
+
+      <section aria-labelledby="timeline-heading" class="relative">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="timeline-heading" class="text-display-md font-bold text-[var(--color-text)]">تایم‌لاین خاطرات</h2>
+          <button
+            type="button"
+            id="add-memory-btn"
+            class="btn btn-neon text-body font-semibold px-4 py-2.5 rounded-xl focus-ring animate-pulse-glow"
+            aria-label="افزودن خاطره جدید"
+          >
+            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span class="hidden sm:inline">افزودن خاطره</span>
+          </button>
+        </div>
+
+        <div id="timeline-container" class="pr-6 lg:pr-0">
+        </div>
+      </section>
+    </div>
+  </div>
 
   <AddMemoryModal />
+
+  <nav class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto px-4 pb-4 safe-bottom z-30" aria-label="نوار اقدامات">
+    <button
+      type="button"
+      id="fab-add-memory"
+      class="btn btn-primary w-full sm:w-auto mx-auto sm:mx-0 px-6 py-3.5 rounded-2xl focus-ring neon-glow shadow-[0_4px_24px_rgba(16,185,129,0.35)]"
+      aria-label="افزودن خاطره جدید"
+    >
+      <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>ثبت خاطره جدید</span>
+    </button>
+  </nav>
 </Layout>
 
-<script>
-  import { initTheme } from '../lib/theme';
-  import { initParticles } from '../lib/particles';
-
-  initTheme();
-  initParticles();
-</script>
+<script type="module" src="/scripts/index.js"></script>

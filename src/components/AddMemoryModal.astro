@@ -1,119 +1,132 @@
 ---
+const MEHRDAD_MOODS = [
+  { value: 'ریلکس / خفن', label: 'ریلکس / خفن', emoji: '😎' },
+  { value: 'خسته', label: 'خسته', emoji: '🫠' },
+  { value: 'پشم‌ریزون', label: 'پشم‌ریزون', emoji: '🤯' },
+  { value: 'چای به دست', label: 'چای به دست', emoji: '🍵' },
+];
+
+const SOGOL_MOODS = [
+  { value: 'گرگی / مود', label: 'گرگی / مود', emoji: '🐺' },
+  { value: 'مظلوم', label: 'مظلوم', emoji: '🥺' },
+  { value: 'در حال پاره شدن', label: 'در حال پاره شدن', emoji: '😂' },
+  { value: 'شکر‌لازم', label: 'شکر‌لازم', emoji: '🍧' },
+];
 ---
-<button
-  id="fab"
-  aria-label="ثبت خاطره جدید"
-  class="fab fixed bottom-[calc(env(safe-area-inset-bottom,0px)+22px)] left-1/2 z-30 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full"
->
-  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
-    <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"></path>
-  </svg>
-</button>
 
-<div
-  id="add-backdrop"
-  class="fixed inset-0 z-40 hidden bg-black/50 opacity-0 safe-top safe-bottom"
-></div>
+<div id="add-memory-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-drawer" role="document">
+    <div class="modal-handle" aria-hidden="true"></div>
 
-<div
-  id="add-drawer"
-  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden w-full max-w-[430px] rounded-t-3xl p-5 pb-8 safe-bottom"
-  style="background: var(--color-canvas); border-top: 1px solid var(--glass-border); box-shadow: 0 -24px 70px -24px rgba(0, 0, 0, 0.65);"
->
-  <div class="mb-4 flex items-center justify-between">
-    <h3 class="text-base font-bold text-ink">ثبت خاطره جدید</h3>
-    <button id="add-cancel" class="text-sm text-ink-soft">بستن</button>
-  </div>
+    <header class="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
+      <h2 id="modal-title" class="text-heading font-semibold text-[var(--color-text)]">ثبت خاطره جدید</h2>
+      <button type="button" class="btn btn-ghost p-2 rounded-xl focus-ring" id="close-modal" aria-label="بستن">
+        <svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </header>
 
-  <form id="add-form" class="flex flex-col gap-4">
-    <label class="flex flex-col gap-1.5">
-      <span class="text-xs text-ink-soft">عنوان</span>
-      <input
-        name="title"
-        type="text"
-        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
-        placeholder="مثلاً: قدم زدن کنار دریا"
-      />
-    </label>
-
-    <label class="flex flex-col gap-1.5">
-      <span class="text-xs text-ink-soft">توضیحات</span>
-      <textarea
-        name="description"
-        rows="3"
-        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
-        placeholder="اون لحظه چطور بود؟"
-      ></textarea>
-    </label>
-
-    <label class="flex flex-col gap-1.5">
-      <span class="text-xs text-ink-soft">اسم آهنگ (اختیاری)</span>
-      <input
-        name="song"
-        type="text"
-        class="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-mint"
-        placeholder="🎵 Haal Naram - Amin Tijay"
-      />
-    </label>
-
-    <div class="grid grid-cols-2 gap-3">
-      <label class="flex flex-col gap-1.5">
-        <span class="text-xs text-ink-soft">تاریخ</span>
-        <input
-          name="date"
-          type="date"
-          class="rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-ink outline-none focus:border-mint [color-scheme:light]"
-        />
-      </label>
-      <label class="flex flex-col gap-1.5">
-        <span class="text-xs text-ink-soft">ساعت</span>
-        <input
-          name="time"
-          type="time"
-          class="rounded-2xl border border-line bg-surface px-3 py-3 text-sm text-ink outline-none focus:border-mint [color-scheme:light]"
-        />
-      </label>
-    </div>
-    <p id="date-preview" class="text-[11px] text-ink-soft"></p>
-
-    <div>
-      <span class="mb-2 block text-xs text-ink-soft">حس مهرداد</span>
-      <div id="mehrdad-moods" class="flex flex-wrap gap-2"></div>
-    </div>
-
-    <div>
-      <span class="mb-2 block text-xs text-ink-soft">حس سوگل</span>
-      <div id="sogol-moods" class="flex flex-wrap gap-2"></div>
-    </div>
-
-    <div>
-      <span class="mb-2 block text-xs text-ink-soft">ثبت توسط</span>
-      <div class="flex gap-3">
-        <label
-          class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink has-[:checked]:border-mint has-[:checked]:text-mint"
-        >
-          <input type="radio" name="author" value="mehrdad" checked class="accent-mint" />
-          مهرداد
-        </label>
-        <label
-          class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink has-[:checked]:border-mint has-[:checked]:text-mint"
-        >
-          <input type="radio" name="author" value="sogol" class="accent-mint" />
-          سوگل
-        </label>
+    <form id="memory-form" class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-5" novalidate>
+      <div>
+        <label for="title" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">عنوان خاطره</label>
+        <input type="text" id="title" name="title" class="input-field" placeholder="مثل: اولین کوaffee صبحگاهی" required maxlength="60" autocomplete="off" />
       </div>
-    </div>
 
-    <button
-      type="submit"
-      class="mt-1 rounded-2xl bg-mint py-3.5 text-sm font-bold text-mint-ink"
-    >
-      ثبت خاطره
-    </button>
-  </form>
+      <div>
+        <label for="description" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">توضیحات</label>
+        <textarea id="description" name="description" class="input-field min-h-[100px] resize-y" placeholder="جزئیات خاطره را بنویسید..." required maxlength="500"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="date" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">تاریخ (شمسی)</label>
+          <input type="text" id="date" name="date" class="input-field text-center" placeholder="۱۴۰۵/۰۶/۰۱" required maxlength="10" autocomplete="off" />
+        </div>
+        <div>
+          <label for="time" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">ساعت</label>
+          <input type="time" id="time" name="time" class="input-field" required />
+        </div>
+      </div>
+
+      <div>
+        <label for="song" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">آهنگ (اختیاری)</label>
+        <input type="text" id="song" name="song" class="input-field" placeholder="مثل: حال نرم - امین تیجایی" maxlength="80" autocomplete="off" />
+      </div>
+
+      <fieldset>
+        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">خالق خاطره</legend>
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="author" value="mehrdad" class="sr-only peer" checked />
+            <span class="author-chip glass px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-body font-medium text-[var(--color-text-muted)] peer-checked:border-[var(--color-accent)] peer-checked:bg-[rgba(16,185,129,0.1)] peer-checked:text-[var(--color-accent)] peer-checked:shadow-[0_0_12px_rgba(16,185,129,0.2)] transition-all duration-300">مهرداد</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="author" value="sogol" class="sr-only peer" />
+            <span class="author-chip glass px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-body font-medium text-[var(--color-text-muted)] peer-checked:border-[var(--color-accent)] peer-checked:bg-[rgba(16,185,129,0.1)] peer-checked:text-[var(--color-accent)] peer-checked:shadow-[0_0_12px_rgba(16,185,129,0.2)] transition-all duration-300">سوگل</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">حالت مهرداد</legend>
+        <div class="mood-grid" id="mood-mehrdad" role="radiogroup" aria-label="انتخاب حالت مهرداد">
+          {MEHRDAD_MOODS.map(mood => (
+            <button type="button" class="mood-chip" data-mood={mood.value} role="radio" aria-checked="false">
+              <span class="emoji">{mood.emoji}</span>
+              <span>{mood.label}</span>
+            </button>
+          ))}
+        </div>
+        <input type="hidden" name="moodMehrdad" id="mood-mehrdad-input" value={MEHRDAD_MOODS[0].value} />
+      </fieldset>
+
+      <fieldset>
+        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">حالت سوگل</legend>
+        <div class="mood-grid" id="mood-sogol" role="radiogroup" aria-label="انتخاب حالت سوگل">
+          {SOGOL_MOODS.map(mood => (
+            <button type="button" class="mood-chip" data-mood={mood.value} role="radio" aria-checked="false">
+              <span class="emoji">{mood.emoji}</span>
+              <span>{mood.label}</span>
+            </button>
+          ))}
+        </div>
+        <input type="hidden" name="moodSogol" id="mood-sogol-input" value={SOGOL_MOODS[0].value} />
+      </fieldset>
+
+      <div class="pt-4 border-t border-[var(--color-border)]">
+        <button type="submit" class="btn btn-primary w-full py-3.5 rounded-xl focus-ring">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          ذخیره خاطره
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<script>
-  import { initAddModal } from '../lib/modal';
-  initAddModal();
-</script>
+<script type="module" src="/scripts/add-memory-modal.js"></script>
+
+<style>
+  .mood-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 430px) {
+    .modal-drawer {
+      max-height: 100vh;
+      border-radius: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-backdrop, .modal-drawer, .mood-chip, .author-chip {
+      transition: none !important;
+    }
+  }
+</style>
