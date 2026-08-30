@@ -30,8 +30,3 @@ Thumbs.db
 *.swo
 *~
 
-# fonts (binary, not committed)
-public/fonts/*.ttf
-public/fonts/*.otf
-public/fonts/*.woff
-public/fonts/*.woff2
