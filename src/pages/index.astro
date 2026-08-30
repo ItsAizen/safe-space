@@ -1,24 +1,56 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PinLock from '../components/PinLock.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LiveCounter from '../components/LiveCounter.astro';
-import Timeline from '../components/Timeline.astro';
-import AddMemoryModal from '../components/AddMemoryModal.astro';
 import '../styles/global.css';
 ---
 
 <Layout>
-  <PinLock />
+  <!-- PIN LOCK -->
+  <div id="pin-lock" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
+    <div class="absolute inset-0 bg-surface-dark/95 backdrop-blur-2xl"></div>
+    <div class="relative z-10 flex flex-col items-center px-8 w-full max-w-[320px]">
+      <div id="pin-icon" class="mb-8 w-16 h-16 rounded-2xl bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
+        <svg class="w-7 h-7 text-neon-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white/95 mb-2 tracking-tight">Safe Space</h1>
+      <p class="text-sm text-white/40 mb-10">ورود به فضای اختصاصی</p>
+      <div id="pin-dots" class="flex items-center gap-4 mb-12">
+        <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+        <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+        <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+        <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+      </div>
+      <div dir="ltr" class="grid grid-cols-3 gap-3 w-full">
+        <button type="button" data-digit="1" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">1</button>
+        <button type="button" data-digit="2" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">2</button>
+        <button type="button" data-digit="3" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">3</button>
+        <button type="button" data-digit="4" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">4</button>
+        <button type="button" data-digit="5" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">5</button>
+        <button type="button" data-digit="6" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">6</button>
+        <button type="button" data-digit="7" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">7</button>
+        <button type="button" data-digit="8" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">8</button>
+        <button type="button" data-digit="9" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">9</button>
+        <div></div>
+        <button type="button" data-digit="0" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">0</button>
+        <button type="button" data-action="delete" class="pin-key h-16 rounded-2xl bg-transparent border border-transparent text-white/40 flex items-center justify-center transition-all duration-150 active:scale-95">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        </button>
+      </div>
+      <p id="pin-error" class="mt-6 text-sm text-red-400 opacity-0 transition-opacity duration-300 h-5">رمز عبور اشتباه است</p>
+    </div>
+  </div>
 
+  <!-- MAIN APP -->
   <div id="app-content" class="flex flex-col min-h-dvh" style="opacity:0;pointer-events:none;">
     <header class="sticky top-0 z-30 backdrop-blur-xl bg-surface-dark/70 border-b border-glass-border">
       <div class="flex items-center justify-between px-5 h-14">
         <div class="flex items-center gap-2.5">
           <div class="w-7 h-7 rounded-lg bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
-            <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
+            <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           </div>
           <div>
             <h1 class="text-sm font-bold text-white/90 leading-none">Safe Space</h1>
@@ -28,50 +60,118 @@ import '../styles/global.css';
         <ThemeToggle />
       </div>
     </header>
-
     <main class="flex-1 px-4 pt-5 pb-28">
       <LiveCounter />
-      <Timeline />
+      <!-- Timeline -->
+      <section id="timeline-section" class="relative mt-8 pb-24">
+        <div class="flex items-center gap-2 mb-6 px-1">
+          <div class="w-1 h-4 rounded-full bg-neon-emerald/60"></div>
+          <h2 class="text-sm font-medium text-white/50 tracking-wide">تایم‌لاین خاطرات</h2>
+          <div class="flex-1 h-px bg-white/[0.06]"></div>
+        </div>
+        <div id="timeline-container" class="relative">
+          <div class="timeline-line"></div>
+          <div id="timeline-list" class="relative space-y-6"></div>
+          <div id="timeline-empty" class="relative py-16 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto mb-4">
+              <svg class="w-5 h-5 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </div>
+            <p class="text-sm text-white/30">هنوز خاطره‌ای ثبت نشده</p>
+            <p class="text-xs text-white/15 mt-1">اولین خاطره‌تون رو ثبت کنید</p>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
-  <AddMemoryModal />
+  <!-- FAB + DRAWER -->
+  <button id="fab-add" type="button" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 btn-primary flex items-center gap-2 text-sm font-bold shadow-glow-md safe-bottom" style="border-radius:16px;padding:14px 24px;">
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span>ثبت خاطره</span>
+  </button>
+  <div id="drawer-overlay" class="overlay opacity-0 pointer-events-none z-40" style="transition:opacity 0.3s;"></div>
+  <div id="memory-drawer" class="fixed inset-x-0 bottom-0 z-50 translate-y-full" style="transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);">
+    <div class="relative bg-surface-dark-elevated rounded-t-3xl border-t border-glass-border max-h-[85dvh] flex flex-col overflow-hidden" style="box-shadow:0 -8px 40px rgba(0,0,0,0.4);">
+      <div class="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle"><div class="w-10 h-1 rounded-full bg-white/15"></div></div>
+      <div class="flex items-center justify-between px-6 pb-4 border-b border-white/[0.06]">
+        <h3 class="text-base font-bold text-white/90">ثبت خاطره جدید</h3>
+        <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center p-0 rounded-lg"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <form id="memory-form" class="flex-1 overflow-y-auto px-6 py-5 space-y-5" style="-webkit-overflow-scrolling:touch;">
+        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">عنوان</label><input type="text" name="title" required placeholder="عنوان خاطره..." class="input-field" maxlength="120" /></div>
+        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">توضیحات</label><textarea name="description" rows="3" placeholder="درباره این خاطره..." class="input-field resize-none" maxlength="1000"></textarea></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">تاریخ</label><input type="date" name="date" class="input-field text-sm" /></div>
+          <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">ساعت</label><input type="time" name="time" class="input-field text-sm" /></div>
+        </div>
+        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">آهنگ (اختیاری)</label><input type="text" name="song" placeholder="نام آهنگ..." class="input-field" /></div>
+        <div>
+          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت مهرداد</label>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-mood="mehrdad" data-value="😎 ریلکس / خفن" class="chip"><span>😎</span> ریلکس / خفن</button>
+            <button type="button" data-mood="mehrdad" data-value="🫠 خسته" class="chip"><span>🫠</span> خسته</button>
+            <button type="button" data-mood="mehrdad" data-value="🤯 پشم‌ریزون" class="chip"><span>🤯</span> پشم‌ریزون</button>
+            <button type="button" data-mood="mehrdad" data-value="🍵 چای به دست" class="chip"><span>🍵</span> چای به دست</button>
+            <button type="button" data-mood="mehrdad" data-value="🔥 حال خوب" class="chip"><span>🔥</span> حال خوب</button>
+            <button type="button" data-mood="mehrdad" data-value="😴 خواب‌آلود" class="chip"><span>😴</span> خواب‌آلود</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت سوگل</label>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-mood="sogol" data-value="🐺 گرگی / مود" class="chip"><span>🐺</span> گرگی / مود</button>
+            <button type="button" data-mood="sogol" data-value="🥺 مظلوم" class="chip"><span>🥺</span> مظلوم</button>
+            <button type="button" data-mood="sogol" data-value="😂 در حال پاره شدن" class="chip"><span>😂</span> در حال پاره شدن</button>
+            <button type="button" data-mood="sogol" data-value="🍧 شکر‌لازم" class="chip"><span>🍧</span> شکر‌لازم</button>
+            <button type="button" data-mood="sogol" data-value="🌸 حال خوب" class="chip"><span>🌸</span> حال خوب</button>
+            <button type="button" data-mood="sogol" data-value="☕ قهوه‌خور" class="chip"><span>☕</span> قهوه‌خور</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">ثبت توسط</label>
+          <div class="flex gap-3">
+            <label class="flex-1 relative"><input type="radio" name="author" value="mehrdad" class="peer sr-only" checked /><div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">مهرداد</div></label>
+            <label class="flex-1 relative"><input type="radio" name="author" value="sogol" class="peer sr-only" /><div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">سوگل</div></label>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary w-full py-3.5 text-sm mt-2">ثبت خاطره</button>
+        <div class="h-4"></div>
+      </form>
+    </div>
+  </div>
 
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="alert"></div>
+
+  <!-- THEME INIT -->
   <script is:inline>
-  (function() {
-    var LS_KEY = 'ss-memories';
+    (function(){var t=localStorage.getItem('ss-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}})();
+  </script>
 
-    function getMemories() {
-      try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
-      catch(e) { return []; }
-    }
+  <!-- GSAP (local) -->
+  <script is:inline src="/gsap.min.js"></script>
+
+  <!-- ALL APP LOGIC - ONE SCRIPT -->
+  <script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    var LS_KEY = 'ss-memories';
+    var CORRECT_PIN = '1234';
+
+    // --- STORAGE ---
+    function getMemories() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) { return []; } }
     function saveMemories(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
     function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
-    function toast(msg, icon) {
-      var t = document.getElementById('toast');
-      if (!t) return;
-      t.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg;
-      t.classList.add('show');
-      setTimeout(function() { t.classList.remove('show'); }, 2500);
-    }
-
-    function escapeHtml(s) {
-      var d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
-
-    function toPer(s) {
-      return String(s).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
-    }
+    // --- UTILS ---
+    function toPer(s) { return String(s).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
+    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function toast(msg, icon) { var t = document.getElementById('toast'); if (!t) return; t.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2500); }
 
     function formatJalali(dateStr) {
-      var d = new Date(dateStr);
-      if (isNaN(d.getTime())) d = new Date();
-      var gy = d.getFullYear(), gm = d.getMonth() + 1, gd = d.getDate();
+      var d = new Date(dateStr); if (isNaN(d.getTime())) d = new Date();
+      var gy = d.getFullYear(), gm = d.getMonth()+1, gd = d.getDate();
       var g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
-      var gy2 = gm > 2 ? gy + 1 : gy;
+      var gy2 = gm > 2 ? gy+1 : gy;
       var days = 355666 + 365*gy + Math.floor((gy2+3)/4) - Math.floor((gy2+99)/100) + Math.floor((gy2+399)/400) + gd + g_d_m[gm-1];
       var jy = -1595 + 33*Math.floor(days/12053); days %= 12053;
       jy += 4*Math.floor(days/1461); days %= 1461;
@@ -82,57 +182,81 @@ import '../styles/global.css';
       return toPer(d.getHours().toString().padStart(2,'0'))+':'+toPer(d.getMinutes().toString().padStart(2,'0'))+' - '+toPer(jy)+'/'+toPer(String(jm).padStart(2,'0'))+'/'+toPer(String(jd).padStart(2,'0'));
     }
 
+    // --- PIN LOCK ---
+    var pinLock = document.getElementById('pin-lock');
+    var pinDots = document.querySelectorAll('.pin-dot');
+    var pinKeys = document.querySelectorAll('.pin-key');
+    var pinError = document.getElementById('pin-error');
+    var pinIcon = document.getElementById('pin-icon');
+    var pinEntered = '';
+
+    function updatePinDots() {
+      pinDots.forEach(function(dot, i) {
+        if (i < pinEntered.length) {
+          dot.classList.add('filled'); dot.style.backgroundColor = '#10b981'; dot.style.borderColor = '#10b981'; dot.style.boxShadow = '0 0 10px rgba(16,185,129,0.5)';
+        } else {
+          dot.classList.remove('filled'); dot.style.backgroundColor = 'transparent'; dot.style.borderColor = ''; dot.style.boxShadow = '';
+        }
+      });
+    }
+
+    function shakePin() {
+      pinError.style.opacity = '1';
+      if (window.gsap) {
+        gsap.timeline().to(pinLock, {x:-12,duration:0.06}).to(pinLock, {x:12,duration:0.06}).to(pinLock, {x:-8,duration:0.06}).to(pinLock, {x:8,duration:0.06}).to(pinLock, {x:-4,duration:0.06}).to(pinLock, {x:0,duration:0.06});
+      }
+      setTimeout(function() { pinEntered = ''; updatePinDots(); pinError.style.opacity = '0'; }, 800);
+    }
+
+    function unlockPin() {
+      sessionStorage.setItem('ss-auth', '1');
+      if (window.gsap) {
+        gsap.to(pinLock, { y:'-100%', opacity:0, duration:0.6, ease:'power3.inOut', onComplete: function() { pinLock.style.display='none'; showApp(); }});
+      } else {
+        pinLock.style.display = 'none'; showApp();
+      }
+    }
+
+    pinKeys.forEach(function(key) {
+      key.addEventListener('click', function() {
+        var digit = this.getAttribute('data-digit');
+        var action = this.getAttribute('data-action');
+        if (action === 'delete') { pinEntered = pinEntered.slice(0,-1); updatePinDots(); return; }
+        if (!digit || pinEntered.length >= 4) return;
+        pinEntered += digit;
+        updatePinDots();
+        if (pinEntered.length === 4) {
+          setTimeout(function() { if (pinEntered === CORRECT_PIN) unlockPin(); else shakePin(); }, 150);
+        }
+      });
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key >= '0' && e.key <= '9') { var btn = document.querySelector('[data-digit="'+e.key+'"]'); if (btn) btn.click(); }
+      else if (e.key === 'Backspace') { var del = document.querySelector('[data-action="delete"]'); if (del) del.click(); }
+    });
+
+    // --- RENDER ---
     function renderCards(memories) {
       var list = document.getElementById('timeline-list');
       var empty = document.getElementById('timeline-empty');
-      if (!list) { console.error('timeline-list not found'); return; }
+      if (!list) return;
       list.innerHTML = '';
-      if (!memories || memories.length === 0) {
-        if (empty) empty.classList.remove('hidden');
-        return;
-      }
-      if (empty) empty.classList.add('hidden');
+      if (!memories || memories.length === 0) { if (empty) empty.style.display = ''; return; }
+      if (empty) empty.style.display = 'none';
       memories.sort(function(a,b) { return new Date(b.createdAt||b.date) - new Date(a.createdAt||a.date); });
       memories.forEach(function(mem) {
         var authorLabel = mem.author === 'mehrdad' ? 'ثبت توسط مهرداد' : 'ثبت توسط سوگل';
         var authorColor = mem.author === 'mehrdad' ? 'text-neon-emerald/70' : 'text-purple-400/70';
         var songHtml = mem.song ? '<div class="mt-3 inline-flex items-center gap-2 rounded-full bg-neon-emerald/[0.06] border border-neon-emerald/[0.12] px-3 py-1.5"><div class="audio-wave"><span></span><span></span><span></span><span></span><span></span></div><span class="text-xs text-neon-emerald/70">'+escapeHtml(mem.song)+'</span></div>' : '';
         var moodHtml = '';
-        if (mem.mehrdadMood || mem.sogolMood) {
-          var pills = '';
-          if (mem.mehrdadMood) pills += '<span class="chip text-[11px]">'+escapeHtml(mem.mehrdadMood)+'</span>';
-          if (mem.sogolMood) pills += '<span class="chip text-[11px]">'+escapeHtml(mem.sogolMood)+'</span>';
-          moodHtml = '<div class="flex flex-wrap gap-2 mt-3">'+pills+'</div>';
-        }
+        if (mem.mehrdadMood || mem.sogolMood) { var pills=''; if(mem.mehrdadMood) pills+='<span class="chip text-[11px]">'+escapeHtml(mem.mehrdadMood)+'</span>'; if(mem.sogolMood) pills+='<span class="chip text-[11px]">'+escapeHtml(mem.sogolMood)+'</span>'; moodHtml='<div class="flex flex-wrap gap-2 mt-3">'+pills+'</div>'; }
         var card = document.createElement('div');
         card.className = 'gsap-stagger relative pr-11';
         card.setAttribute('data-id', mem.id);
-        card.innerHTML =
-          '<div class="timeline-dot"></div>'+
-          '<div class="glass-card p-5 ml-0">'+
-            '<div class="flex items-center justify-between mb-3">'+
-              '<div class="flex items-center gap-2.5">'+
-                '<span class="text-[10px] font-medium text-white/30 bg-white/[0.04] rounded-md px-2 py-1 tracking-wider tabular-nums">'+formatJalali(mem.createdAt||mem.date)+'</span>'+
-                '<span class="text-[10px] font-medium '+authorColor+'">'+authorLabel+'</span>'+
-              '</div>'+
-              '<button type="button" data-delete-id="'+mem.id+'" class="relative w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200 active:scale-90">'+
-                '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'+
-                '<div class="absolute left-0 top-full mt-2 z-50 glass-card px-4 py-3 flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-200" data-confirm-for="'+mem.id+'" style="min-width:220px;">'+
-                  '<span class="text-xs text-white/60">حذف شود؟</span>'+
-                  '<button type="button" data-confirm-delete="'+mem.id+'" class="text-xs text-red-400 hover:text-red-300 font-medium px-2 py-1 rounded-lg hover:bg-red-400/[0.1] transition-all">بله</button>'+
-                  '<button type="button" data-cancel-delete="'+mem.id+'" class="text-xs text-white/40 hover:text-white/60 font-medium px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-all">خیر</button>'+
-                '</div>'+
-              '</button>'+
-            '</div>'+
-            '<h3 class="text-[15px] font-bold text-white/90 leading-relaxed mb-1.5">'+escapeHtml(mem.title)+'</h3>'+
-            '<p class="text-[13px] text-white/50 leading-[1.85]">'+escapeHtml(mem.description||'')+'</p>'+
-            songHtml+moodHtml+
-          '</div>';
+        card.innerHTML = '<div class="timeline-dot"></div><div class="glass-card p-5 ml-0"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2.5"><span class="text-[10px] font-medium text-white/30 bg-white/[0.04] rounded-md px-2 py-1 tracking-wider tabular-nums">'+formatJalali(mem.createdAt||mem.date)+'</span><span class="text-[10px] font-medium '+authorColor+'">'+authorLabel+'</span></div><button type="button" data-delete-id="'+mem.id+'" class="relative w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200 active:scale-90"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div><h3 class="text-[15px] font-bold text-white/90 leading-relaxed mb-1.5">'+escapeHtml(mem.title)+'</h3><p class="text-[13px] text-white/50 leading-[1.85]">'+escapeHtml(mem.description||'')+'</p>'+songHtml+moodHtml+'</div>';
         list.appendChild(card);
       });
-      if (window.gsap) {
-        gsap.from('.gsap-stagger', { y:30, opacity:0, duration:0.6, stagger:0.08, ease:'power3.out', clearProps:'all' });
-      }
       wireDeleteButtons();
     }
 
@@ -141,30 +265,14 @@ import '../styles/global.css';
         btn.onclick = function(e) {
           e.stopPropagation();
           var id = this.getAttribute('data-delete-id');
-          var pop = document.querySelector('[data-confirm-for="'+id+'"]');
-          if (pop) { pop.classList.toggle('opacity-0'); pop.classList.toggle('pointer-events-none'); }
-        };
-      });
-      document.querySelectorAll('[data-confirm-delete]').forEach(function(btn) {
-        btn.onclick = function(e) {
-          e.stopPropagation();
-          var id = this.getAttribute('data-confirm-delete');
+          var card = document.querySelector('[data-id="'+id+'"]');
+          if (!card) return;
           var memories = getMemories().filter(function(m) { return m.id !== id; });
           saveMemories(memories);
-          fetch('/api/memories', { method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id}) }).catch(function(){});
-          var card = document.querySelector('[data-id="'+id+'"]');
-          if (card && window.gsap) {
-            gsap.to(card, { x:-50, opacity:0, height:0, padding:0, marginBottom:0, duration:0.4, ease:'power2.in', onComplete:function(){ card.remove(); } });
-          } else if (card) { card.remove(); }
+          fetch('/api/memories', {method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id})}).catch(function(){});
+          if (window.gsap) { gsap.to(card, {x:-50,opacity:0,height:0,padding:0,marginBottom:0,duration:0.4,ease:'power2.in',onComplete:function(){card.remove();}}); }
+          else { card.remove(); }
           toast('خاطره حذف شد','🗑️');
-        };
-      });
-      document.querySelectorAll('[data-cancel-delete]').forEach(function(btn) {
-        btn.onclick = function(e) {
-          e.stopPropagation();
-          var id = this.getAttribute('data-cancel-delete');
-          var pop = document.querySelector('[data-confirm-for="'+id+'"]');
-          if (pop) { pop.classList.add('opacity-0'); pop.classList.add('pointer-events-none'); }
         };
       });
     }
@@ -172,150 +280,77 @@ import '../styles/global.css';
     function loadAndRender() {
       var local = getMemories();
       renderCards(local);
-      fetch('/api/memories').then(function(r) { if(r.ok) return r.json(); throw 0; }).then(function(server) {
-        if (server && server.length > 0) {
-          var ids = {}; local.forEach(function(m){ ids[m.id]=true; });
-          var merged = local.slice();
-          server.forEach(function(m){ if(!ids[m.id]) merged.push(m); });
-          saveMemories(merged);
-          renderCards(merged);
-        }
+      fetch('/api/memories').then(function(r){if(r.ok)return r.json();throw 0;}).then(function(server){
+        if(server&&server.length>0){var ids={};local.forEach(function(m){ids[m.id]=true;});var merged=local.slice();server.forEach(function(m){if(!ids[m.id])merged.push(m);});saveMemories(merged);renderCards(merged);}
       }).catch(function(){});
     }
 
-    function openDrawer() {
-      var d = document.getElementById('memory-drawer');
-      var o = document.getElementById('drawer-overlay');
-      d.style.transform = 'translateY(0)';
-      o.style.opacity = '1';
-      o.classList.remove('pointer-events-none');
-      o.classList.add('pointer-events-auto');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDrawer() {
-      var d = document.getElementById('memory-drawer');
-      var o = document.getElementById('drawer-overlay');
-      d.style.transform = 'translateY(100%)';
-      o.style.opacity = '0';
-      o.classList.add('pointer-events-none');
-      o.classList.remove('pointer-events-auto');
-      document.body.style.overflow = '';
-    }
-    function setFormDefaults() {
-      var f = document.getElementById('memory-form');
-      if (!f) return;
-      var now = new Date();
-      var di = f.querySelector('[name="date"]');
-      var ti = f.querySelector('[name="time"]');
-      if (di) di.value = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-      if (ti) ti.value = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-    }
-
+    // --- SHOW APP ---
     function showApp() {
       var el = document.getElementById('app-content');
       if (!el) return;
       el.style.opacity = '1';
       el.style.pointerEvents = 'auto';
-      if (window.gsap) gsap.from(el, { opacity:0, y:20, duration:0.6, ease:'power3.out' });
       loadAndRender();
     }
 
-    // --- INIT ---
-    if (sessionStorage.getItem('ss-auth') === '1') {
-      showApp();
-    } else {
-      window.addEventListener('pin-unlocked', showApp);
-    }
-
-    // FAB + drawer
+    // --- DRAWER ---
     var fab = document.getElementById('fab-add');
-    var closeBtn = document.getElementById('drawer-close');
+    var drawer = document.getElementById('memory-drawer');
     var overlay = document.getElementById('drawer-overlay');
-    if (fab) fab.addEventListener('click', openDrawer);
-    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-    if (overlay) overlay.addEventListener('click', closeDrawer);
+    var closeBtn = document.getElementById('drawer-close');
 
-    // Mood chips
-    var selectedMehrdadMood = '';
-    var selectedSogolMood = '';
+    function openDrawer() { drawer.style.transform='translateY(0)'; overlay.style.opacity='1'; overlay.classList.remove('pointer-events-none'); overlay.classList.add('pointer-events-auto'); document.body.style.overflow='hidden'; }
+    function closeDrawer() { drawer.style.transform='translateY(100%)'; overlay.style.opacity='0'; overlay.classList.add('pointer-events-none'); overlay.classList.remove('pointer-events-auto'); document.body.style.overflow=''; }
+
+    fab.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    // --- MOOD CHIPS ---
+    var selM = '', selS = '';
     document.querySelectorAll('[data-mood]').forEach(function(chip) {
       chip.addEventListener('click', function(e) {
         e.preventDefault();
-        var type = this.getAttribute('data-mood');
-        var value = this.getAttribute('data-value');
-        this.parentElement.querySelectorAll('.chip').forEach(function(s){ s.classList.remove('active'); });
-        if (type === 'mehrdad') {
-          selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
-          if (selectedMehrdadMood) this.classList.add('active');
-        } else {
-          selectedSogolMood = selectedSogolMood === value ? '' : value;
-          if (selectedSogolMood) this.classList.add('active');
-        }
+        var type = this.getAttribute('data-mood'), val = this.getAttribute('data-value');
+        this.parentElement.querySelectorAll('.chip').forEach(function(s){s.classList.remove('active');});
+        if (type==='mehrdad') { selM = selM===val?'':val; if(selM) this.classList.add('active'); }
+        else { selS = selS===val?'':val; if(selS) this.classList.add('active'); }
       });
     });
 
-    // Form submit
+    // --- FORM ---
     var form = document.getElementById('memory-form');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        var formData = new FormData(form);
-        var dateVal = formData.get('date');
-        var timeVal = formData.get('time');
-        var memoryDate;
-        try {
-          if (dateVal && timeVal) memoryDate = new Date(dateVal+'T'+timeVal+':00');
-          else if (dateVal) memoryDate = new Date(dateVal+'T12:00:00');
-          else memoryDate = new Date();
-          if (isNaN(memoryDate.getTime())) memoryDate = new Date();
-        } catch(ex) { memoryDate = new Date(); }
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      var dv = fd.get('date'), tv = fd.get('time'), md;
+      try { if(dv&&tv) md=new Date(dv+'T'+tv+':00'); else if(dv) md=new Date(dv+'T12:00:00'); else md=new Date(); if(isNaN(md.getTime()))md=new Date(); } catch(x) { md=new Date(); }
+      var payload = { id:genId(), title:String(fd.get('title')||'').slice(0,120), description:String(fd.get('description')||'').slice(0,1000), song:fd.get('song')||null, mehrdadMood:selM||null, sogolMood:selS||null, author:fd.get('author')==='sogol'?'sogol':'mehrdad', date:md.toISOString(), createdAt:new Date().toISOString() };
+      var memories = getMemories(); memories.push(payload); saveMemories(memories);
+      fetch('/api/memories',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){if(r.ok)return r.json();throw 0;}).then(function(s){var i=memories.findIndex(function(m){return m.id===payload.id;});if(i!==-1){memories[i]=s;saveMemories(memories);}}).catch(function(){});
+      closeDrawer(); form.reset(); selM=''; selS='';
+      document.querySelectorAll('.chip.active').forEach(function(c){c.classList.remove('active');});
+      setFormDefaults(); renderCards(getMemories()); toast('خاطره ثبت شد');
+    });
 
-        var payload = {
-          id: genId(),
-          title: String(formData.get('title')||'').slice(0,120),
-          description: String(formData.get('description')||'').slice(0,1000),
-          song: formData.get('song') || null,
-          mehrdadMood: selectedMehrdadMood || null,
-          sogolMood: selectedSogolMood || null,
-          author: formData.get('author') === 'sogol' ? 'sogol' : 'mehrdad',
-          date: memoryDate.toISOString(),
-          createdAt: new Date().toISOString(),
-        };
-
-        var memories = getMemories();
-        memories.push(payload);
-        saveMemories(memories);
-
-        fetch('/api/memories', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
-          .then(function(r){ if(r.ok) return r.json(); throw 0; })
-          .then(function(saved){ var idx=memories.findIndex(function(m){return m.id===payload.id;}); if(idx!==-1){memories[idx]=saved;saveMemories(memories);} })
-          .catch(function(){});
-
-        closeDrawer();
-        form.reset();
-        selectedMehrdadMood = '';
-        selectedSogolMood = '';
-        document.querySelectorAll('.chip.active').forEach(function(c){ c.classList.remove('active'); });
-        setFormDefaults();
-        renderCards(getMemories());
-        toast('خاطره ثبت شد');
-      });
+    function setFormDefaults() {
+      var now=new Date(),di=form.querySelector('[name="date"]'),ti=form.querySelector('[name="time"]');
+      if(di)di.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+      if(ti)ti.value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
     }
-
-    // Swipe handle
-    var handle = document.getElementById('drawer-handle');
-    if (handle) {
-      var startY = 0;
-      handle.addEventListener('touchstart', function(e){ startY=e.touches[0].clientY; }, {passive:true});
-      handle.addEventListener('touchmove', function(e){ if(e.touches[0].clientY-startY>80) closeDrawer(); }, {passive:true});
-    }
-
     setFormDefaults();
 
-    // Light mode header
-    var s = document.createElement('style');
-    s.textContent = 'html.light header{background:rgba(250,250,249,0.8);border-color:rgba(0,0,0,0.06)}html.light header h1{color:#1c1917}html.light header p{color:rgba(0,0,0,0.35)}';
-    document.head.appendChild(s);
-  })();
+    // --- SWIPE ---
+    var handle = document.getElementById('drawer-handle'), startY=0;
+    handle.addEventListener('touchstart',function(e){startY=e.touches[0].clientY;},{passive:true});
+    handle.addEventListener('touchmove',function(e){if(e.touches[0].clientY-startY>80)closeDrawer();},{passive:true});
+
+    // --- AUTH CHECK ---
+    if (sessionStorage.getItem('ss-auth') === '1') {
+      pinLock.style.display = 'none';
+      showApp();
+    }
+  });
   </script>
 </Layout>
