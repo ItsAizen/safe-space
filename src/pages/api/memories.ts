@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { kv } from '@vercel/kv';
 
 interface Memory {
   id: string;
@@ -16,7 +15,7 @@ interface Memory {
 const KV_KEY = 'safe-space:memories';
 const hasKV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
-// Fallback to in-memory store for local dev
+// In-memory fallback for local dev
 let localStore: Memory[] = [];
 
 function generateId(): string {
@@ -25,6 +24,7 @@ function generateId(): string {
 
 async function getAll(): Promise<Memory[]> {
   if (hasKV) {
+    const { kv } = await import('@vercel/kv');
     const data = await kv.get<Memory[]>(KV_KEY);
     return data || [];
   }
@@ -33,6 +33,7 @@ async function getAll(): Promise<Memory[]> {
 
 async function saveAll(memories: Memory[]): Promise<void> {
   if (hasKV) {
+    const { kv } = await import('@vercel/kv');
     await kv.set(KV_KEY, memories);
   } else {
     localStore = memories;
