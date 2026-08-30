@@ -248,20 +248,17 @@
   }
 }
 
-/* GSAP animations helpers */
-.gsap-fade-up {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.gsap-stagger {
-  opacity: 0;
-  transform: translateY(30px);
+/* Timeline card */
+.timeline-card {
+  position: relative;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Toast notification */
 .toast {
-  @apply fixed top-6 left-1/2 -translate-x-1/2 z-[100];
+  @apply fixed z-[100];
+  left: 50%;
+  top: 1.5rem;
   @apply glass-card px-5 py-3 text-sm font-medium;
   @apply flex items-center gap-2;
   transform: translateX(-50%) translateY(-20px);
