@@ -10,19 +10,16 @@
     <span class="counter-head-label">فرکانس مشترک از ۱ شهریور ۱۴۰۵</span>
   </div>
 
-  <!-- Hero ring + days -->
+  <!-- Hero: endless orbit of two souls around the days total -->
   <div class="counter-hero">
-    <div class="counter-ring">
-      <svg class="counter-ring-svg" viewBox="0 0 140 140" aria-hidden="true">
-        <defs>
-          <linearGradient id="counterRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#34d399" />
-            <stop offset="100%" stop-color="#059669" />
-          </linearGradient>
-        </defs>
-        <circle class="ring-track" cx="70" cy="70" r="60"></circle>
-        <circle class="ring-progress" id="counter-ring-prog" cx="70" cy="70" r="60"></circle>
-      </svg>
+    <div class="counter-hero-inner">
+      <div class="orbit-stage" aria-hidden="true">
+        <div class="orbit-ellipse"></div>
+        <div class="orbit-track">
+          <div class="orbit-dot orbit-dot--m"><span>م</span></div>
+          <div class="orbit-dot orbit-dot--s"><span>س</span></div>
+        </div>
+      </div>
       <div class="counter-days">
         <span id="counter-days">۰</span>
         <small>روز</small>
@@ -59,13 +56,11 @@
 (function() {
   // 1 Shahrivar 1405 = 2026-08-23T00:00:00+03:30 (Iran time)
   var MILESTONE = new Date('2026-08-23T00:00:00+03:30').getTime();
-  var CIRC = 376.991; // 2 * PI * 60 for the ring
 
   var daysEl = document.getElementById('counter-days');
   var hoursEl = document.getElementById('counter-hours');
   var minutesEl = document.getElementById('counter-minutes');
   var secondsEl = document.getElementById('counter-seconds');
-  var ringEl = document.getElementById('counter-ring-prog');
 
   if (!daysEl) return;
 
@@ -107,7 +102,6 @@
       hoursEl.textContent = fmt(0);
       minutesEl.textContent = fmt(0);
       secondsEl.textContent = fmt(0);
-      if (ringEl) ringEl.style.strokeDashoffset = CIRC;
       return;
     }
 
@@ -129,17 +123,6 @@
       tick(minutesEl, fmt(minutes));
       tick(secondsEl, fmt(seconds));
     }
-
-    // Ring = progress of the current day (24h cycle)
-    if (ringEl) {
-      var dayProgress = (totalSeconds % 86400) / 86400;
-      ringEl.style.strokeDashoffset = String(CIRC * (1 - dayProgress));
-    }
-  }
-
-  if (ringEl) {
-    ringEl.style.strokeDasharray = String(CIRC);
-    ringEl.style.strokeDashoffset = String(CIRC);
   }
 
   update();
@@ -156,8 +139,8 @@
         ease: 'power3.out',
         delay: 0.15,
       });
-      gsap.from('.counter-ring', {
-        scale: 0.85,
+      gsap.from('.counter-hero-inner', {
+        scale: 0.88,
         opacity: 0,
         duration: 0.7,
         ease: 'back.out(1.6)',
@@ -200,7 +183,7 @@
     align-items: center;
     justify-content: center;
     gap: 9px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
   .counter-head-label {
     font-size: 11px;
@@ -220,47 +203,95 @@
     100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
   }
 
-  /* Ring */
+  /* Hero: two souls orbiting the days total (endless) */
   .counter-hero {
     display: flex;
     justify-content: center;
-    margin-bottom: 18px;
+    margin: 10px 0 18px;
   }
-  .counter-ring {
+  .counter-hero-inner {
     position: relative;
-    width: 172px;
-    height: 172px;
+    width: 184px;
+    height: 188px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .counter-ring-svg {
+  .counter-hero-inner::before {
+    content: '';
+    position: absolute;
+    inset: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 66%);
+    pointer-events: none;
+  }
+
+  .orbit-stage {
     position: absolute;
     inset: 0;
-    transform: rotate(-90deg);
+    pointer-events: none;
   }
-  .ring-track,
-  .ring-progress {
-    fill: none;
-    stroke-width: 6;
+  .orbit-ellipse,
+  .orbit-track {
+    position: absolute;
+    inset: 12px 0;
+    border-radius: 50%;
+    transform: scaleY(0.52);
   }
-  .ring-track {
-    stroke: rgba(255,255,255,0.07);
+  .orbit-ellipse {
+    border: 1px dashed rgba(16,185,129,0.22);
   }
-  .ring-progress {
-    stroke: url(#counterRingGrad);
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 6px rgba(16,185,129,0.55));
+  .orbit-track {
+    will-change: transform;
+  }
+
+  .orbit-dot {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    will-change: transform;
+  }
+  .orbit-dot--m {
+    background: linear-gradient(135deg, #34d399, #059669);
+    box-shadow: 0 0 14px rgba(16,185,129,0.75),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+    animation: orbitM 8s linear infinite;
+  }
+  .orbit-dot--s {
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    box-shadow: 0 0 14px rgba(167,139,250,0.75),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+    animation: orbitS 12s linear infinite;
+  }
+  @keyframes orbitM {
+    from { transform: rotate(0deg) translateX(84px) rotate(0deg) scaleY(1.92); }
+    to   { transform: rotate(360deg) translateX(84px) rotate(-360deg) scaleY(1.92); }
+  }
+  @keyframes orbitS {
+    from { transform: rotate(0deg) translateX(56px) rotate(0deg) scaleY(1.92); }
+    to   { transform: rotate(360deg) translateX(56px) rotate(-360deg) scaleY(1.92); }
   }
 
   .counter-days {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 3px;
   }
   .counter-days span {
-    font-size: 44px;
+    font-size: 46px;
     font-weight: 800;
     line-height: 1;
     color: #34d399;
@@ -370,7 +401,10 @@
     text-shadow: 0 0 22px rgba(16,185,129,0.3);
   }
   html.light .counter-days small { color: rgba(24,24,27,0.45); }
-  html.light .ring-track { stroke: rgba(0,0,0,0.06); }
+  html.light .counter-hero-inner::before {
+    background: radial-gradient(circle, rgba(16,185,129,0.12), transparent 66%);
+  }
+  html.light .orbit-ellipse { border-color: rgba(5,150,105,0.32); }
   html.light .counter-chip {
     background: rgba(255,255,255,0.85);
     border-color: rgba(0,0,0,0.06);
