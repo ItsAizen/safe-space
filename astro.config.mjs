@@ -9,7 +9,7 @@ export default defineConfig({
   server: { port: 4321 },
   vite: {
     optimizeDeps: {
-      exclude: ['@vercel/kv']
+      exclude: ['@upstash/redis']
     }
   }
 });

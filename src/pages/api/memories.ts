@@ -13,19 +13,26 @@ interface Memory {
 }
 
 const KV_KEY = 'safe-space:memories';
-const hasKV = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
-// In-memory fallback for local dev
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+const hasKV = !!(UPSTASH_URL && UPSTASH_TOKEN);
+
 let localStore: Memory[] = [];
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+async function getRedis() {
+  const { Redis } = await import('@upstash/redis');
+  return new Redis({ url: UPSTASH_URL, token: UPSTASH_TOKEN });
+}
+
 async function getAll(): Promise<Memory[]> {
   if (hasKV) {
-    const { kv } = await import('@vercel/kv');
-    const data = await kv.get<Memory[]>(KV_KEY);
+    const redis = await getRedis();
+    const data = await redis.get<Memory[]>(KV_KEY);
     return data || [];
   }
   return localStore;
@@ -33,8 +40,8 @@ async function getAll(): Promise<Memory[]> {
 
 async function saveAll(memories: Memory[]): Promise<void> {
   if (hasKV) {
-    const { kv } = await import('@vercel/kv');
-    await kv.set(KV_KEY, memories);
+    const redis = await getRedis();
+    await redis.set(KV_KEY, memories);
   } else {
     localStore = memories;
   }
