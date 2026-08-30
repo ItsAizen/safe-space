@@ -146,9 +146,12 @@
   addMemoryBtn?.addEventListener('click', openModal);
   fabBtn?.addEventListener('click', openModal);
 
-  // Auto-render timeline on load (no PIN lock)
-  if (appContent) appContent.hidden = false;
-  renderTimeline();
+  document.addEventListener('pin-unlocked', () => {
+    if (appContent) {
+      appContent.hidden = false;
+      renderTimeline();
+    }
+  });
 
   document.addEventListener('memory-delete', (e) => {
     const id = e.detail?.id;
