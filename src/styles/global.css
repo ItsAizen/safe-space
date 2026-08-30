@@ -263,6 +263,31 @@
   80% { transform: translateX(5px); }
 }
 
+/* Header (dark default) */
+.app-header {
+  background: rgba(9, 10, 15, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.app-header-title {
+  color: rgba(255, 255, 255, 0.92);
+}
+.app-header-sub {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Header (light mode) */
+html.light .app-header {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+html.light .app-header-title {
+  color: #18181b;
+}
+html.light .app-header-sub {
+  color: rgba(24, 24, 27, 0.5);
+}
+
 /* Toast notification */
 .toast {
   @apply fixed z-[100] left-1/2 top-4 -translate-x-1/2;
