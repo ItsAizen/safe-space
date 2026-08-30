@@ -6,46 +6,47 @@ import '../styles/global.css';
 ---
 
 <Layout>
-  <div id="pin-lock" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
+  <div id="pin-lock" class="fixed inset-0 z-50 flex flex-col items-center justify-center pointer-events-auto">
     <div class="absolute inset-0 bg-surface-dark/95 backdrop-blur-2xl"></div>
-    <div class="relative z-10 flex flex-col items-center px-8 w-full max-w-[320px]">
-      <div id="pin-icon" class="mb-8 w-16 h-16 rounded-2xl bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
-        <svg class="w-7 h-7 text-neon-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <div class="relative z-10 flex flex-col items-center px-8 w-full max-w-[340px]">
+      <div id="pin-icon" class="mb-8 w-14 h-14 rounded-2xl bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <h1 class="text-2xl font-bold text-white/95 mb-2 tracking-tight">Safe Space</h1>
       <p class="text-sm text-white/40 mb-10">ورود به فضای اختصاصی</p>
-      <div id="pin-dots" class="flex items-center gap-4 mb-12">
+      <div id="pin-dots" class="flex items-center gap-4 mb-8">
         <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
         <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
         <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
         <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
       </div>
-      <div dir="ltr" class="grid grid-cols-3 gap-3 w-full">
-        <button type="button" data-digit="1" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">1</button>
-        <button type="button" data-digit="2" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">2</button>
-        <button type="button" data-digit="3" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">3</button>
-        <button type="button" data-digit="4" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">4</button>
-        <button type="button" data-digit="5" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">5</button>
-        <button type="button" data-digit="6" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">6</button>
-        <button type="button" data-digit="7" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">7</button>
-        <button type="button" data-digit="8" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">8</button>
-        <button type="button" data-digit="9" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">9</button>
-        <div></div>
-        <button type="button" data-digit="0" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95">0</button>
-        <button type="button" data-action="delete" class="pin-key h-16 rounded-2xl bg-transparent border border-transparent text-white/40 flex items-center justify-center transition-all duration-150 active:scale-95">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+      <div dir="ltr" class="grid grid-cols-4 gap-1">
+        <button type="button" data-digit="1" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">1</button>
+        <button type="button" data-digit="2" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">2</button>
+        <button type="button" data-digit="3" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">3</button>
+        <button type="button" data-digit="4" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">4</button>
+        <button type="button" data-digit="5" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">5</button>
+        <button type="button" data-digit="6" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">6</button>
+        <button type="button" data-digit="7" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">7</button>
+        <button type="button" data-digit="8" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">8</button>
+        <button type="button" data-digit="9" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">9</button>
+        <div class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95"></div>
+        <button type="button" data-digit="0" class="pin-key h-12 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/90 text-sm font-medium transition-all duration-150 active:scale-95">0</button>
+        <button type="button" data-action="delete" class="pin-key h-12 rounded-lg bg-transparent border border-white/20 text-white/40 flex items-center justify-center transition-all duration-150 active:scale-95">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>
-      <p id="pin-error" class="mt-6 text-sm text-red-400 opacity-0 transition-opacity duration-300 h-5">رمز عبور اشتباه است</p>
+      <p id="pin-error" class="mt-4 text-sm text-red-400 opacity-0 transition-opacity duration-300 text-center">رمز عبور اشتباه است</p>
     </div>
   </div>
 
-  <div id="app-content" class="flex flex-col min-h-dvh" style="opacity:0;pointer-events:none;">
-    <header class="sticky top-0 z-30 backdrop-blur-xl bg-surface-dark/70 border-b border-glass-border">
-      <div class="flex items-center justify-between px-5 h-14">
+  <div id="app-content" class="flex flex-col min-h-dvh overflow-hidden" style="opacity:0;pointer-events:none;">
+
+    <header class="sticky top-0 z-30 backdrop-blur-xl bg-surface-dark/70 border-b border-white/[0.06]">
+      <div class="flex items-center justify-between px-4 h-14">
         <div class="flex items-center gap-2.5">
-          <div class="w-7 h-7 rounded-lg bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
-            <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <div class="w-7 h-7 rounded-lg bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           </div>
           <div>
             <h1 class="text-sm font-bold text-white/90 leading-none">Safe Space</h1>
@@ -55,89 +56,78 @@ import '../styles/global.css';
         <ThemeToggle />
       </div>
     </header>
-    <main class="flex-1 px-4 pt-5 pb-28">
+
+    <main class="flex-1 px-4 pt-4 pb-16 overflow-y-auto">
       <LiveCounter />
-      <section id="timeline-section" class="relative mt-8 pb-24">
-        <div class="flex items-center gap-2 mb-6 px-1">
-          <div class="w-1 h-4 rounded-full bg-neon-emerald/60"></div>
-          <h2 class="text-sm font-medium text-white/50 tracking-wide">تایم‌لاین خاطرات</h2>
+      <section class="mt-6">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-1 h-4 rounded-full bg-emerald-600/60"></div>
+          <h2 class="text-sm font-medium text-white/50 tracking-wide">تیم‌لاین خاطرات</h2>
           <div class="flex-1 h-px bg-white/[0.06]"></div>
         </div>
-        <div id="timeline-container" class="relative">
-          <div class="timeline-line"></div>
-          <div id="timeline-list" class="relative space-y-6"></div>
-          <div id="timeline-empty" class="relative py-16 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto mb-4">
-              <svg class="w-5 h-5 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            </div>
-            <p class="text-sm text-white/30">هنوز خاطره‌ای ثبت نشده</p>
-            <p class="text-xs text-white/15 mt-1">اولین خاطره‌تون رو ثبت کنید</p>
+        <div class="relative">
+          <div class="timeline-line absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-px bg-emerald-600/50"></div>
+          <div id="timeline-list" class="relative space-y-4"></div>
+          <div id="timeline-empty" class="absolute inset-0 flex items-center justify-center text-white/30 text-center">
+            <div class="text-[12px]">هنوز خاطره‌ای ثبت نشده</div>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <button id="fab-add" type="button" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 btn-primary flex items-center gap-2 text-sm font-bold shadow-glow-md safe-bottom" style="border-radius:16px;padding:14px 24px;">
+  <button id="fab-add" type="button" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 btn-primary flex items-center gap-2 text-sm font-bold rounded-full px-5 py-3 shadow-lg safe-bottom" style="background:linear-gradient(135deg, #10b981, #059669);">
     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     <span>ثبت خاطره</span>
   </button>
 
-  <div id="drawer-overlay" class="overlay opacity-0 pointer-events-none z-40" style="transition:opacity 0.3s;"></div>
-  <div id="memory-drawer" class="fixed inset-x-0 bottom-0 z-50 translate-y-full" style="transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);">
-    <div class="relative bg-surface-dark-elevated rounded-t-3xl border-t border-glass-border max-h-[85dvh] flex flex-col overflow-hidden" style="box-shadow:0 -8px 40px rgba(0,0,0,0.4);">
-      <div class="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle"><div class="w-10 h-1 rounded-full bg-white/15"></div></div>
-      <div class="flex items-center justify-between px-6 pb-4 border-b border-white/[0.06]">
-        <h3 class="text-base font-bold text-white/90">ثبت خاطره جدید</h3>
-        <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center p-0 rounded-lg"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div id="drawer-overlay" class="overlay opacity-0 pointer-events-none z-40 transition-opacity duration-300" style="background:rgba(0,0,0,0.5);"></div>
+  <div id="memory-drawer" class="fixed inset-x-0 bottom-0 z-50 translate-y-full transition-transform duration-400 ease-out" style="box-shadow:0 -8px 40px rgba(0,0,0,0.4); background:rgba(17,24,39,0.8);">
+    <div class="relative bg-surface-dark-elevated rounded-t-2xl border-t border-white/[0.06] max-h-[85dvh] overflow-hidden">
+      <div class="flex justify-center pt-2 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle"><div class="w-8 h-1 rounded-full bg-white/15"></div></div>
+      <div class="flex items-center justify-between px-5 pb-4 border-b border-white/[0.06]">
+        <h3 class="text-base font-bold text-white/90"> ثبت خاطره جدید</h3>
+        <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center rounded-lg p-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
-      <form id="memory-form" class="flex-1 overflow-y-auto px-6 py-5 space-y-5" style="-webkit-overflow-scrolling:touch;">
-        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">عنوان</label><input type="text" name="title" required placeholder="عنوان خاطره..." class="input-field" maxlength="120" /></div>
-        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">توضیحات</label><textarea name="description" rows="3" placeholder="درباره این خاطره..." class="input-field resize-none" maxlength="1000"></textarea></div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">تاریخ</label><input type="date" name="date" class="input-field text-sm" /></div>
-          <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">ساعت</label><input type="time" name="time" class="input-field text-sm" /></div>
+      <form id="memory-form" class="p-5 space-y-4 resize-none">
+        <div><label class="text-[10px] font-medium text-white/35 block tracking-wider">عنوان</label><input type="text" name="title" required class="input-field w-full rounded-lg bg-white/[0.04] border border-white/[0.06] text-white py-2.5 placeholder-text-white/40" placeholder="عنوان خاطره..." maxlength="120" /></div>
+        <div><label class="text-[10px] font-medium text-white/35 block tracking-wider">توضیحات</label><textarea name="description" rows="2" class="input-field w-full rounded-lg bg-white/[0.04] border border-white/[0.06] text-white py-1.5 resize-none placeholder-text-white/40" maxlength="1000"></textarea></div>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div><label class="text-[10px] font-medium text-white/35 block tracking-wider">تاریخ</label><input type="date" name="date" class="input-field rounded-lg bg-white/[0.04] border border-white/[0.06] text-white py-2.5" /></div>
+          <div><label class="text-[10px] font-medium text-white/35 block tracking-wider">ساعت</label><input type="time" name="time" class="input-field rounded-lg bg-white/[0.04] border border-white/[0.06] text-white py-2.5" /></div>
         </div>
-        <div><label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">آهنگ (اختیاری)</label><input type="text" name="song" placeholder="نام آهنگ..." class="input-field" /></div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت مهرداد</label>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-mood="mehrdad" data-value="😎 ریلکس / خفن" class="chip"><span>😎</span> ریلکس / خفن</button>
-            <button type="button" data-mood="mehrdad" data-value="🫠 خسته" class="chip"><span>🫠</span> خسته</button>
-            <button type="button" data-mood="mehrdad" data-value="🤯 پشم‌ریزون" class="chip"><span>🤯</span> پشم‌ریزون</button>
-            <button type="button" data-mood="mehrdad" data-value="🍵 چای به دست" class="chip"><span>🍵</span> چای به دست</button>
-            <button type="button" data-mood="mehrdad" data-value="🔥 حال خوب" class="chip"><span>🔥</span> حال خوب</button>
-            <button type="button" data-mood="mehrdad" data-value="😴 خواب‌آلود" class="chip"><span>😴</span> خواب‌آلود</button>
+        <div><label class="text-[10px] font-medium text-white/35 block tracking-wider">آهنگ (اختیاری)</label><input type="text" name="song" class="input-field w-full rounded-lg bg-white/[0.04] border border-white/[0.06] text-white py-2.5 placeholder-text-white/40" placeholder="نام آهنگ..." /></div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-medium text-white/35 block tracking-wider">حالت مهرداد</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-mood="mehrdad" data-value="😎" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">😎 ریلکس</button>
+            <button type="button" data-mood="mehrdad" data-value="🤯" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">🤯 پشم‌ریزون</button>
+            <button type="button" data-mood="mehrdad" data-value="🔥" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">🔥 حال خوب</button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] font-medium text-white/35 block tracking-wider">حالت سوگل</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-mood="sogol" data-value="🐺" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">🐺 گرگی</button>
+            <button type="button" data-mood="sogol" data-value="🥺" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">🥺 مظلوم</button>
+            <button type="button" data-mood="sogol" data-value="😂" class="chip inline-flex items-center gap-1 px-2 py-1 rounded text-[9px] bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20">😂 خنده‌دار</button>
           </div>
         </div>
         <div>
-          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت سوگل</label>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-mood="sogol" data-value="🐺 گرگی / مود" class="chip"><span>🐺</span> گرگی / مود</button>
-            <button type="button" data-mood="sogol" data-value="🥺 مظلوم" class="chip"><span>🥺</span> مظلوم</button>
-            <button type="button" data-mood="sogol" data-value="😂 در حال پاره شدن" class="chip"><span>😂</span> در حال پاره شدن</button>
-            <button type="button" data-mood="sogol" data-value="🍧 شکر‌لازم" class="chip"><span>🍧</span> شکر‌لازم</button>
-            <button type="button" data-mood="sogol" data-value="🌸 حال خوب" class="chip"><span>🌸</span> حال خوب</button>
-            <button type="button" data-mood="sogol" data-value="☕ قهوه‌خور" class="chip"><span>☕</span> قهوه‌خور</button>
+          <label class="text-[10px] font-medium text-white/35 block tracking-wider">ثبت توسط</label>
+          <div class="flex gap-2">
+            <label class="flex-1 relative cursor-pointer py-2 rounded-xl border border-white/[0.06] bg-white/[0.02] text-sm font-medium text-white/50 hover:bg-white/[0.04]"><input type="radio" name="author" value="mehrdad" class="peer sr-only" checked /><span>مهرداد</span></label>
+            <label class="flex-1 relative cursor-pointer py-2 rounded-xl border border-white/[0.06] bg-white/[0.02] text-sm font-medium text-white/50 hover:bg-white/[0.04]"><input type="radio" name="author" value="sogol" class="peer sr-only" /><span>سوگل</span></label>
           </div>
         </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">ثبت توسط</label>
-          <div class="flex gap-3">
-            <label class="flex-1 relative"><input type="radio" name="author" value="mehrdad" class="peer sr-only" checked /><div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">مهرداد</div></label>
-            <label class="flex-1 relative"><input type="radio" name="author" value="sogol" class="peer sr-only" /><div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">سوگل</div></label>
-          </div>
+        <div class="pt-3 border-t border-white/[0.06]">
+          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-white py-2.5 rounded-lg font-medium text-sm transition-colors"> ثبت خاطره</button>
         </div>
-        <button type="submit" class="btn-primary w-full py-3.5 text-sm mt-2">ثبت خاطره</button>
-        <div class="h-4"></div>
       </form>
     </div>
   </div>
 
-  <div id="toast" class="toast" role="alert"></div>
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 opacity-0 transition-opacity duration-300"><span>❤️</span> خاطره ثبت شد</div>
 
-  <script is:inline>
-    (function(){var t=localStorage.getItem('ss-theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light');}})();
-  </script>
   <script is:inline src="/scripts/app.js"></script>
 </Layout>
