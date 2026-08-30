@@ -1,128 +1,164 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import LiveCounter from '../components/LiveCounter.astro';
 import '../styles/global.css';
 ---
 
-<Layout>
-  <!-- MAIN APP -->
-  <div id="app-content" class="flex flex-col min-h-dvh">
-
-    <header class="app-header sticky top-0 z-30 backdrop-blur-xl border-b">
-      <div class="flex items-center justify-between px-4 h-14">
-        <div class="flex items-center gap-2.5">
-          <div class="w-7 h-7 rounded-lg bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
-            <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          </div>
-          <div>
-            <h1 class="app-header-title text-sm font-bold leading-none">Safe Space</h1>
-          </div>
+<Layout title="در حال تعمیر | Safe Space">
+  <header class="app-header sticky top-0 z-30 backdrop-blur-xl border-b">
+    <div class="flex items-center justify-between px-4 h-14">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
-        <ThemeToggle />
+        <h1 class="app-header-title text-sm font-bold leading-none">Safe Space</h1>
       </div>
-    </header>
-
-    <main class="flex-1 px-4 pt-4 pb-24 overflow-y-auto">
-      <LiveCounter />
-
-      <section class="mt-6">
-        <div class="flex items-center gap-2 mb-6">
-          <div class="w-1 h-4 rounded-full bg-neon-emerald/60"></div>
-          <h2 class="section-title text-sm font-medium text-white/50 tracking-wide">تایم‌لاین خاطرات</h2>
-          <div class="section-rule flex-1 h-px bg-white/[0.06]"></div>
-        </div>
-
-        <div class="relative">
-          <div class="timeline-line"></div>
-          <div id="timeline-list" class="relative space-y-5"></div>
-          <div id="timeline-empty" class="relative py-20 text-center" style="display:none">
-            <div class="empty-icon w-14 h-14 rounded-2xl bg-white/[0.04] border border-glass-border flex items-center justify-center mx-auto mb-4">
-              <svg class="w-6 h-6 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            </div>
-            <p class="text-sm text-white/30">هنوز خاطره‌ای ثبت نشده</p>
-            <p class="text-xs text-white/15 mt-1.5">اولین خاطره‌تون رو ثبت کنید</p>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- FAB - INSIDE app-content -->
-    <button id="fab-add" type="button" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 text-sm font-bold text-white rounded-full px-6 py-3.5 shadow-glow-md active:scale-95 transition-transform duration-100 safe-bottom" style="background:linear-gradient(135deg, #10b981, #059669);border-radius:9999px;">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>ثبت خاطره</span>
-    </button>
-  </div>
-
-  <!-- DRAWER OVERLAY -->
-  <div id="drawer-overlay" class="overlay" style="opacity:0;pointer-events:none;z-index:40;"></div>
-
-  <!-- DRAWER -->
-  <div id="memory-drawer" class="fixed inset-x-0 bottom-0 z-50 translate-y-full" style="transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);">
-    <div class="drawer-panel bg-surface-dark-elevated rounded-t-3xl border-t border-glass-border max-h-[85dvh] flex flex-col overflow-hidden">
-      <div class="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle">
-        <div class="drawer-grip w-10 h-1 rounded-full bg-white/15"></div>
-      </div>
-      <div class="drawer-head flex items-center justify-between px-6 pb-4 border-b border-white/[0.06]">
-        <h3 class="drawer-title text-base font-bold text-white/90">ثبت خاطره جدید</h3>
-        <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center p-0 rounded-lg">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <form id="memory-form" class="flex-1 overflow-y-auto px-6 py-5 space-y-5" style="-webkit-overflow-scrolling:touch;">
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-1.5 block tracking-wider">عنوان</label>
-          <input type="text" name="title" required placeholder="عنوان خاطره..." class="input-field" maxlength="120" />
-        </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-1.5 block tracking-wider">توضیحات</label>
-          <textarea name="description" rows="3" placeholder="درباره این خاطره..." class="input-field resize-none" maxlength="1000"></textarea>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-[11px] font-medium text-white/35 field-label mb-1.5 block tracking-wider">تاریخ</label><input type="date" name="date" class="input-field text-sm" /></div>
-          <div><label class="text-[11px] font-medium text-white/35 field-label mb-1.5 block tracking-wider">ساعت</label><input type="time" name="time" class="input-field text-sm" /></div>
-        </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-1.5 block tracking-wider">آهنگ (اختیاری)</label>
-          <input type="text" name="song" placeholder="نام آهنگ..." class="input-field" />
-        </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-2.5 block tracking-wider">حالت مهرداد</label>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-mood="mehrdad" data-value="😎 ریلکس / خفن" class="chip"><span>😎</span> ریلکس / خفن</button>
-            <button type="button" data-mood="mehrdad" data-value="🫠 خسته" class="chip"><span>🫠</span> خسته</button>
-            <button type="button" data-mood="mehrdad" data-value="🤯 پشم‌ریزون" class="chip"><span>🤯</span> پشم‌ریزون</button>
-            <button type="button" data-mood="mehrdad" data-value="🍵 چای به دست" class="chip"><span>🍵</span> چای به دست</button>
-            <button type="button" data-mood="mehrdad" data-value="🔥 حال خوب" class="chip"><span>🔥</span> حال خوب</button>
-            <button type="button" data-mood="mehrdad" data-value="😴 خواب‌آلود" class="chip"><span>😴</span> خواب‌آلود</button>
-          </div>
-        </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-2.5 block tracking-wider">حالت سوگل</label>
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-mood="sogol" data-value="🐺 گرگی / مود" class="chip"><span>🐺</span> گرگی / مود</button>
-            <button type="button" data-mood="sogol" data-value="🥺 مظلوم" class="chip"><span>🥺</span> مظلوم</button>
-            <button type="button" data-mood="sogol" data-value="😂 در حال پاره شدن" class="chip"><span>😂</span> در حال پاره شدن</button>
-            <button type="button" data-mood="sogol" data-value="🍧 شکر‌لازم" class="chip"><span>🍧</span> شکر‌لازم</button>
-            <button type="button" data-mood="sogol" data-value="🌸 حال خوب" class="chip"><span>🌸</span> حال خوب</button>
-            <button type="button" data-mood="sogol" data-value="☕ قهوه‌خور" class="chip"><span>☕</span> قهوه‌خور</button>
-          </div>
-        </div>
-        <div>
-          <label class="text-[11px] font-medium text-white/35 field-label mb-2.5 block tracking-wider">ثبت توسط</label>
-          <div class="flex gap-3">
-            <label class="flex-1 relative cursor-pointer"><input type="radio" name="author" value="mehrdad" class="peer sr-only" checked /><div class="text-center py-3 rounded-xl border author-option border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">مهرداد</div></label>
-            <label class="flex-1 relative cursor-pointer"><input type="radio" name="author" value="sogol" class="peer sr-only" /><div class="text-center py-3 rounded-xl border author-option border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">سوگل</div></label>
-          </div>
-        </div>
-        <button type="submit" class="btn-primary w-full py-3.5 text-sm mt-2">ثبت خاطره</button>
-        <div class="h-4"></div>
-      </form>
+      <ThemeToggle />
     </div>
-  </div>
+  </header>
 
-  <!-- TOAST -->
-  <div id="toast" class="toast"></div>
+  <main class="fix-screen">
+    <div class="fix-card">
+      <div class="fix-stage" aria-hidden="true">
+        <div class="fix-zap fix-zap--a">💡</div>
+        <div class="fix-zap fix-zap--b">🔧</div>
+        <span class="fix-bin">🗑️</span>
+        <span class="fix-spark">✨</span>
+      </div>
 
-  <script is:inline src="/scripts/app.js"></script>
+      <p class="fix-msg">ایده جانک بود، مث تمام جانکا پرت شد سطل آشغال :)</p>
+
+      <div class="fix-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </main>
 </Layout>
+
+<style is:global>
+  .fix-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .fix-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 28px;
+    padding: 40px 26px 32px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02) 60%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 16px 40px rgba(0, 0, 0, 0.16);
+  }
+
+  .fix-stage {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 22px;
+  }
+  .fix-bin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 62px;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+    animation: binJiggle 2.4s ease-in-out infinite;
+  }
+  @keyframes binJiggle {
+    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+    42% { transform: translate(-50%, -50%) rotate(-7deg); }
+    44% { transform: translate(-50%, -50%) rotate(8deg); }
+    46% { transform: translate(-50%, -50%) rotate(-5deg); }
+    50% { transform: translate(-50%, -52%); }
+  }
+
+  .fix-zap {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .fix-zap--a {
+    top: 2px;
+    left: 18px;
+    transform-origin: 70% 90%;
+    animation: zapSpin 2.4s ease-in-out infinite;
+  }
+  .fix-zap--b {
+    top: 44px;
+    left: 6px;
+    animation: bob 1.6s ease-in-out infinite;
+  }
+  @keyframes zapSpin {
+    0% { transform: rotate(0deg); opacity: 0; }
+    18% { opacity: 1; transform: rotate(0deg); }
+    55% { opacity: 1; }
+    70% { transform: rotate(320deg); opacity: 0; }
+    100% { transform: rotate(320deg); opacity: 0; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+
+  .fix-spark {
+    position: absolute;
+    right: 8px;
+    bottom: 16px;
+    font-size: 18px;
+    animation: sparkBlink 1.2s ease-in-out infinite;
+  }
+  @keyframes sparkBlink {
+    0%, 100% { opacity: 0.15; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  .fix-msg {
+    margin: 18px 0 8px;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .fix-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 24px;
+  }
+  .fix-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.55);
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+  .fix-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .fix-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes dotBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Light mode */
+  html.light .fix-card {
+    background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.65));
+    border-color: rgba(0, 0, 0, 0.07);
+    box-shadow: inset 0 1px 0 #fff,
+                0 16px 40px rgba(0, 0, 0, 0.07);
+  }
+  html.light .fix-msg { color: #18181b; }
+</style>
