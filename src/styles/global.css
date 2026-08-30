@@ -254,11 +254,18 @@
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+/* Shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
 /* Toast notification */
 .toast {
-  @apply fixed z-[100];
-  left: 50%;
-  top: 1.5rem;
+  @apply fixed z-[100] left-1/2 top-4 -translate-x-1/2;
   @apply glass-card px-5 py-3 text-sm font-medium;
   @apply flex items-center gap-2;
   transform: translateX(-50%) translateY(-20px);
@@ -268,4 +275,13 @@
 .toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+}
+
+/* Memory card */
+.memory-card {
+  @apply group-hover:shadow-2xl transition-shadow duration-300;
+  @apply rounded-2xl border border-white/[0.05] bg-white/[0.03] backdrop-blur-xl p-5;
+}
+.memory-card .memory-dot {
+  @apply absolute right-2 top-2 w-5 h-5 rounded-full bg-emerald-500/80 group-hover:opacity-100 transition-opacity duration-200;
 }
