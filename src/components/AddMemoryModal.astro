@@ -139,19 +139,25 @@
 
 <script is:inline>
 (function() {
-  const fab = document.getElementById('fab-add');
-  const drawer = document.getElementById('memory-drawer');
-  const overlay = document.getElementById('drawer-overlay');
-  const closeBtn = document.getElementById('drawer-close');
-  const form = document.getElementById('memory-form');
-  const submitBtn = document.getElementById('submit-btn');
-  const submitText = document.getElementById('submit-text');
-  const submitSpinner = document.getElementById('submit-spinner');
+  const LS_KEY = 'ss-memories';
 
-  let selectedMehrdadMood = '';
-  let selectedSogolMood = '';
+  function getLocalMemories() {
+    try {
+      return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    } catch { return []; }
+  }
+
+  function setLocalMemories(memories) {
+    localStorage.setItem(LS_KEY, JSON.stringify(memories));
+  }
+
+  function generateClientId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
 
   function openDrawer() {
+    const drawer = document.getElementById('memory-drawer');
+    const overlay = document.getElementById('drawer-overlay');
     drawer.style.transform = 'translateY(0)';
     overlay.style.opacity = '1';
     overlay.classList.remove('pointer-events-none');
@@ -169,6 +175,8 @@
   }
 
   function closeDrawer() {
+    const drawer = document.getElementById('memory-drawer');
+    const overlay = document.getElementById('drawer-overlay');
     drawer.style.transform = 'translateY(100%)';
     overlay.style.opacity = '0';
     overlay.classList.add('pointer-events-none');
@@ -176,12 +184,8 @@
     document.body.style.overflow = '';
   }
 
-  fab.addEventListener('click', openDrawer);
-  closeBtn.addEventListener('click', closeDrawer);
-  overlay.addEventListener('click', closeDrawer);
-
-  // Set default date/time
   function setDefaults() {
+    const form = document.getElementById('memory-form');
     const now = new Date();
     const dateInput = form.querySelector('[name="date"]');
     const timeInput = form.querySelector('[name="time"]');
@@ -193,118 +197,154 @@
     }
   }
 
-  // Mood chips
-  document.querySelectorAll('[data-mood]').forEach(chip => {
-    chip.addEventListener('click', function(e) {
-      e.preventDefault();
-      const type = this.dataset.mood;
-      const value = this.dataset.value;
+  function showToast(msg, icon) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg;
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2500);
+  }
 
-      // Deselect siblings
-      const siblings = this.parentElement.querySelectorAll('.chip');
-      siblings.forEach(s => s.classList.remove('active'));
+  function init() {
+    var fab = document.getElementById('fab-add');
+    var form = document.getElementById('memory-form');
+    var submitBtn = document.getElementById('submit-btn');
+    var submitText = document.getElementById('submit-text');
+    var submitSpinner = document.getElementById('submit-spinner');
+    var closeBtn = document.getElementById('drawer-close');
+    var overlay = document.getElementById('drawer-overlay');
+    var selectedMehrdadMood = '';
+    var selectedSogolMood = '';
 
-      if (type === 'mehrdad') {
-        selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
-        if (selectedMehrdadMood) this.classList.add('active');
-      } else {
-        selectedSogolMood = selectedSogolMood === value ? '' : value;
-        if (selectedSogolMood) this.classList.add('active');
-      }
+    fab.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
 
-      // Spring feedback
-      if (window.gsap) {
-        gsap.fromTo(this, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(3)' });
-      }
-    });
-  });
+    document.querySelectorAll('[data-mood]').forEach(function(chip) {
+      chip.addEventListener('click', function(e) {
+        e.preventDefault();
+        var type = this.dataset.mood;
+        var value = this.dataset.value;
+        var siblings = this.parentElement.querySelectorAll('.chip');
+        siblings.forEach(function(s) { s.classList.remove('active'); });
 
-  // Form submission
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+        if (type === 'mehrdad') {
+          selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
+          if (selectedMehrdadMood) this.classList.add('active');
+        } else {
+          selectedSogolMood = selectedSogolMood === value ? '' : value;
+          if (selectedSogolMood) this.classList.add('active');
+        }
 
-    const formData = new FormData(form);
-    const dateVal = formData.get('date');
-    const timeVal = formData.get('time');
-
-    let memoryDate;
-    if (dateVal && timeVal) {
-      memoryDate = new Date(`${dateVal}T${timeVal}:00`);
-    } else if (dateVal) {
-      memoryDate = new Date(`${dateVal}T${new Date().toTimeString().slice(0, 8)}`);
-    } else {
-      memoryDate = new Date();
-    }
-
-    const payload = {
-      title: formData.get('title'),
-      description: formData.get('description'),
-      song: formData.get('song') || null,
-      mehrdadMood: selectedMehrdadMood || null,
-      sogolMood: selectedSogolMood || null,
-      author: formData.get('author'),
-      date: memoryDate.toISOString(),
-    };
-
-    // Show loading
-    submitText.classList.add('hidden');
-    submitSpinner.classList.remove('hidden');
-    submitBtn.disabled = true;
-
-    try {
-      const res = await fetch('/api/memories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        if (window.gsap) {
+          gsap.fromTo(this, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(3)' });
+        }
       });
+    });
 
-      if (res.ok) {
-        const newMemory = await res.json();
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      var formData = new FormData(form);
+      var dateVal = formData.get('date');
+      var timeVal = formData.get('time');
+      var memoryDate;
+
+      try {
+        if (dateVal && timeVal) {
+          memoryDate = new Date(dateVal + 'T' + timeVal + ':00');
+        } else if (dateVal) {
+          memoryDate = new Date(dateVal + 'T12:00:00');
+        } else {
+          memoryDate = new Date();
+        }
+        if (isNaN(memoryDate.getTime())) memoryDate = new Date();
+      } catch(ex) {
+        memoryDate = new Date();
+      }
+
+      var payload = {
+        id: generateClientId(),
+        title: String(formData.get('title') || '').slice(0, 120),
+        description: String(formData.get('description') || '').slice(0, 1000),
+        song: formData.get('song') || null,
+        mehrdadMood: selectedMehrdadMood || null,
+        sogolMood: selectedSogolMood || null,
+        author: formData.get('author') === 'sogol' ? 'sogol' : 'mehrdad',
+        date: memoryDate.toISOString(),
+        createdAt: new Date().toISOString(),
+      };
+
+      submitText.classList.add('hidden');
+      submitSpinner.classList.remove('hidden');
+      submitBtn.disabled = true;
+
+      try {
+        var res = await fetch('/api/memories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          var saved = await res.json();
+          var memories = getLocalMemories();
+          memories.push(saved);
+          setLocalMemories(memories);
+
+          closeDrawer();
+          form.reset();
+          selectedMehrdadMood = '';
+          selectedSogolMood = '';
+          document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
+          setDefaults();
+
+          if (window.renderTimeline) window.renderTimeline(memories);
+          showToast('خاطره ثبت شد');
+        } else {
+          throw new Error('API error ' + res.status);
+        }
+      } catch (err) {
+        console.error('API save failed, using localStorage only:', err);
+
+        var memories = getLocalMemories();
+        memories.push(payload);
+        setLocalMemories(memories);
+
         closeDrawer();
         form.reset();
         selectedMehrdadMood = '';
         selectedSogolMood = '';
-        document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
         setDefaults();
 
-        // Optimistic UI: add to timeline
-        if (window.loadMemories) window.loadMemories();
-        window.showToast?.('خاطره ثبت شد ✨');
-      } else {
-        throw new Error('Failed to save');
+        if (window.renderTimeline) window.renderTimeline(memories);
+        showToast('خاطره ذخیره شد (آفلاین)');
+      } finally {
+        submitText.classList.remove('hidden');
+        submitSpinner.classList.add('hidden');
+        submitBtn.disabled = false;
       }
-    } catch (err) {
-      console.error('Save failed:', err);
-      window.showToast?.('خطا در ذخیره‌سازی', '❌');
-    } finally {
-      submitText.classList.remove('hidden');
-      submitSpinner.classList.add('hidden');
-      submitBtn.disabled = false;
-    }
-  });
+    });
 
-  // Swipe down to close
-  let startY = 0;
-  const handle = document.getElementById('drawer-handle');
-  handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-  handle.addEventListener('touchmove', e => {
-    const diff = e.touches[0].clientY - startY;
-    if (diff > 80) closeDrawer();
+    setDefaults();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  var handle = document.getElementById('drawer-handle');
+  var startY = 0;
+  handle.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
+  handle.addEventListener('touchmove', function(e) {
+    if (e.touches[0].clientY - startY > 80) closeDrawer();
   }, { passive: true });
 
-  setDefaults();
-
-  // Light mode overrides
-  const style = document.createElement('style');
-  style.textContent = `
-    html.light #memory-drawer > div { background: #fafaf9; border-color: rgba(0,0,0,0.06); }
-    html.light #memory-drawer .text-white\/90 { color: #1c1917; }
-    html.light #memory-drawer .text-white\/35 { color: rgba(0,0,0,0.4); }
-    html.light #memory-drawer .text-white\/50 { color: rgba(0,0,0,0.5); }
-    html.light #drawer-handle > div { background: rgba(0,0,0,0.12); }
-    html.light #drawer-close { color: rgba(0,0,0,0.4); }
-    html.light #fab-add { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-  `;
+  var style = document.createElement('style');
+  style.textContent = 'html.light #memory-drawer > div { background: #fafaf9; border-color: rgba(0,0,0,0.06); } html.light #memory-drawer .text-white\\/90 { color: #1c1917; } html.light #memory-drawer .text-white\\/35 { color: rgba(0,0,0,0.4); } html.light #memory-drawer .text-white\\/50 { color: rgba(0,0,0,0.5); } html.light #drawer-handle > div { background: rgba(0,0,0,0.12); } html.light #drawer-close { color: rgba(0,0,0,0.4); } html.light #fab-add { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }';
   document.head.appendChild(style);
 })();
 </script>

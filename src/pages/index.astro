@@ -13,7 +13,7 @@ import '../styles/global.css';
   <PinLock />
 
   <!-- Main App Content (hidden until PIN unlock) -->
-  <div id="app-content" class="flex flex-col min-h-dvh">
+  <div id="app-content" class="flex flex-col min-h-dvh" style="opacity:0;pointer-events:none;">
     <!-- Top Bar -->
     <header class="sticky top-0 z-30 backdrop-blur-xl bg-surface-dark/70 border-b border-glass-border">
       <div class="flex items-center justify-between px-5 h-14">
@@ -34,23 +34,24 @@ import '../styles/global.css';
 
     <!-- Main Scrollable Content -->
     <main class="flex-1 px-4 pt-5 pb-28">
-      <!-- Live Counter -->
       <LiveCounter />
-
-      <!-- Timeline -->
       <Timeline />
     </main>
   </div>
 
-  <!-- Add Memory Drawer -->
   <AddMemoryModal />
 </Layout>
 
 <script is:inline>
 (function() {
-  const appContent = document.getElementById('app-content');
-  appContent.style.opacity = '0';
-  appContent.style.pointerEvents = 'none';
+  var LS_KEY = 'ss-memories';
+  var appContent = document.getElementById('app-content');
+
+  function getLocalMemories() {
+    try {
+      return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    } catch { return []; }
+  }
 
   function showApp() {
     appContent.style.opacity = '1';
@@ -68,42 +69,45 @@ import '../styles/global.css';
     loadMemories();
   }
 
-  // Check if already authenticated
   if (sessionStorage.getItem('ss-auth') === '1') {
     showApp();
   } else {
     window.addEventListener('pin-unlocked', showApp);
   }
 
-  // Toast helper
   window.showToast = function(message, icon) {
-    const toast = document.getElementById('toast');
+    var toast = document.getElementById('toast');
     if (!toast) return;
-    toast.innerHTML = `<span>${icon || '✨'}</span> ${message}`;
+    toast.innerHTML = '<span>' + (icon || '✨') + '</span> ' + message;
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
+    setTimeout(function() { toast.classList.remove('show'); }, 2500);
   };
 
-  // Load memories from API
   window.loadMemories = async function() {
+    var localMemories = getLocalMemories();
+
     try {
-      const res = await fetch('/api/memories');
+      var res = await fetch('/api/memories');
       if (res.ok) {
-        const memories = await res.json();
-        if (window.renderTimeline) window.renderTimeline(memories);
+        var serverMemories = await res.json();
+        if (serverMemories && serverMemories.length > 0) {
+          var localIds = new Set(localMemories.map(function(m) { return m.id; }));
+          var newFromServer = serverMemories.filter(function(m) { return !localIds.has(m.id); });
+          if (newFromServer.length > 0) {
+            localMemories = localMemories.concat(newFromServer);
+            localStorage.setItem(LS_KEY, JSON.stringify(localMemories));
+          }
+        }
       }
     } catch (err) {
-      console.error('Failed to load memories:', err);
+      console.log('API unavailable, using localStorage');
     }
+
+    if (window.renderTimeline) window.renderTimeline(localMemories);
   };
 
-  // Light mode header override
-  const style = document.createElement('style');
-  style.textContent = `
-    html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); }
-    html.light header h1 { color: #1c1917; }
-    html.light header p { color: rgba(0,0,0,0.35); }
-  `;
+  var style = document.createElement('style');
+  style.textContent = 'html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); } html.light header h1 { color: #1c1917; } html.light header p { color: rgba(0,0,0,0.35); }';
   document.head.appendChild(style);
 })();
 </script>

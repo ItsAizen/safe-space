@@ -222,35 +222,32 @@
       btn.addEventListener('click', async function(e) {
         e.stopPropagation();
         const id = this.dataset.confirmDelete;
+        var removeCard = function() {
+          var card = document.querySelector('[data-id="' + id + '"]');
+          if (card && window.gsap) {
+            gsap.to(card, {
+              x: -50, opacity: 0, height: 0, padding: 0, marginBottom: 0,
+              duration: 0.4, ease: 'power2.in',
+              onComplete: function() { card.remove(); }
+            });
+          } else if (card) { card.remove(); }
+        };
         try {
-          const res = await fetch('/api/memories', {
+          var res = await fetch('/api/memories', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id: id }),
           });
-          if (res.ok) {
-            const card = document.querySelector(`[data-id="${id}"]`);
-            if (card && window.gsap) {
-              gsap.to(card, {
-                x: -50,
-                opacity: 0,
-                height: 0,
-                padding: 0,
-                marginBottom: 0,
-                duration: 0.4,
-                ease: 'power2.in',
-                onComplete: () => {
-                  card.remove();
-                  window.showToast?.('خاطره حذف شد', '🗑️');
-                }
-              });
-            } else {
-              card?.remove();
-            }
-          }
+          if (!res.ok) throw new Error('API error');
         } catch (err) {
-          console.error('Delete failed:', err);
+          console.log('API delete failed, removing locally');
         }
+        var memories = [];
+        try { memories = JSON.parse(localStorage.getItem('ss-memories') || '[]'); } catch(ex) {}
+        memories = memories.filter(function(m) { return m.id !== id; });
+        localStorage.setItem('ss-memories', JSON.stringify(memories));
+        removeCard();
+        window.showToast?.('خاطره حذف شد', '🗑️');
       });
     });
 
