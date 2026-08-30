@@ -1,62 +1,222 @@
 ---
-const { onUnlock } = Astro.props;
 ---
 
-<div id="pin-lock" class="fixed inset-0 z-50 flex items-center justify-center p-6 glass-lg" role="dialog" aria-modal="true" aria-labelledby="pin-title">
-  <div class="w-full max-w-sm animate-slide-up">
-    <div class="text-center mb-10">
-      <h1 id="pin-title" class="text-display-lg font-bold text-[var(--color-text)] tracking-tight">Safe Space</h1>
-      <p class="mt-3 text-body text-[var(--color-text-muted)]">ورود به فضای اختصاصی</p>
+<div id="pin-lock" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
+  <!-- Background blur overlay -->
+  <div class="absolute inset-0 bg-surface-dark/95 backdrop-blur-2xl"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 flex flex-col items-center px-8 w-full max-w-[320px]">
+    <!-- Lock icon -->
+    <div id="pin-icon" class="mb-8 w-16 h-16 rounded-2xl bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
+      <svg class="w-7 h-7 text-neon-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
     </div>
 
-    <div class="flex items-center justify-center gap-3 mb-10" role="img" aria-label="رمز عبور ۴ رقمی">
-      <div class="pin-dot" data-index="0" aria-hidden="true"></div>
-      <div class="pin-dot" data-index="1" aria-hidden="true"></div>
-      <div class="pin-dot" data-index="2" aria-hidden="true"></div>
-      <div class="pin-dot" data-index="3" aria-hidden="true"></div>
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-white/95 mb-2 tracking-tight">Safe Space</h1>
+    <p class="text-sm text-white/40 mb-10">ورود به فضای اختصاصی</p>
+
+    <!-- PIN dots -->
+    <div id="pin-dots" class="flex items-center gap-4 mb-12">
+      <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+      <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+      <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
+      <div class="pin-dot w-3 h-3 rounded-full border-2 border-white/20 transition-all duration-300"></div>
     </div>
 
-    <div class="glass p-6 rounded-2xl mb-6" dir="ltr">
-      <div class="grid grid-cols-3 gap-3 mb-3" role="group" aria-label="صفحه کلید اعداد">
-        <button type="button" class="keypad-btn" data-key="1" aria-label="۱">1</button>
-        <button type="button" class="keypad-btn" data-key="2" aria-label="۲">2</button>
-        <button type="button" class="keypad-btn" data-key="3" aria-label="۳">3</button>
-        <button type="button" class="keypad-btn" data-key="4" aria-label="۴">4</button>
-        <button type="button" class="keypad-btn" data-key="5" aria-label="۵">5</button>
-        <button type="button" class="keypad-btn" data-key="6" aria-label="۶">6</button>
-        <button type="button" class="keypad-btn" data-key="7" aria-label="۷">7</button>
-        <button type="button" class="keypad-btn" data-key="8" aria-label="۸">8</button>
-        <button type="button" class="keypad-btn" data-key="9" aria-label="۹">9</button>
-      </div>
-      <div class="flex items-center justify-center gap-3">
-        <button type="button" class="btn btn-ghost w-12 h-12 rounded-xl focus-ring" data-action="backspace" aria-label="حذف">
-          <svg class="w-6 h-6 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-            <line x1="18" y1="9" x2="12" y2="15"></line>
-            <line x1="12" y1="9" x2="18" y2="15"></line>
-          </svg>
-        </button>
-        <button type="button" class="keypad-btn zero" data-key="0" aria-label="۰" style="width: 100%; max-width: 80px;">0</button>
-        <button type="button" class="btn btn-ghost w-12 h-12 rounded-xl focus-ring" data-action="clear" aria-label="پاک کردن">
-          <svg class="w-6 h-6 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
+    <!-- Keypad - forced LTR -->
+    <div dir="ltr" class="grid grid-cols-3 gap-3 w-full">
+      <button type="button" data-digit="1" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">1</button>
+      <button type="button" data-digit="2" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">2</button>
+      <button type="button" data-digit="3" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">3</button>
+
+      <button type="button" data-digit="4" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">4</button>
+      <button type="button" data-digit="5" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">5</button>
+      <button type="button" data-digit="6" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">6</button>
+
+      <button type="button" data-digit="7" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">7</button>
+      <button type="button" data-digit="8" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">8</button>
+      <button type="button" data-digit="9" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">9</button>
+
+      <button type="button" data-digit="" class="pin-key h-16 rounded-2xl bg-transparent border border-transparent text-transparent pointer-events-none"></button>
+      <button type="button" data-digit="0" class="pin-key h-16 rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/90 text-xl font-medium transition-all duration-150 active:scale-95 active:bg-white/[0.12] hover:bg-white/[0.09]">0</button>
+      <button type="button" data-action="delete" class="pin-key h-16 rounded-2xl bg-transparent border border-transparent text-white/40 flex items-center justify-center transition-all duration-150 active:scale-95 hover:text-white/70">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+          <line x1="18" y1="9" x2="12" y2="15" />
+          <line x1="12" y1="9" x2="18" y2="15" />
+        </svg>
+      </button>
     </div>
 
-    <p id="pin-error" class="sr-only" aria-live="polite"></p>
+    <!-- Error text -->
+    <p id="pin-error" class="mt-6 text-sm text-red-400 opacity-0 transition-opacity duration-300 h-5">رمز عبور اشتباه است</p>
   </div>
 </div>
 
-<script type="module" src="/scripts/pin-lock.js"></script>
-
 <style>
-  @media (prefers-reduced-motion: reduce) {
-    #pin-lock .max-w-sm {
-      animation: none !important;
-      transition: none !important;
-    }
+  .html.light #pin-lock .pin-key {
+    @apply bg-black/[0.04] border-black/[0.08] text-gray-800;
+  }
+  .html.light #pin-lock .pin-key:active {
+    @apply bg-black/[0.08];
+  }
+  .html.light #pin-lock .pin-dot {
+    @apply border-black/20;
+  }
+  .html.light #pin-lock .pin-dot.filled {
+    @apply bg-neon-emerald border-neon-emerald;
   }
 </style>
+
+<script is:inline>
+(function() {
+  const CORRECT_PIN = '1234';
+  const MAX_LENGTH = 4;
+
+  // Check if already authenticated
+  if (sessionStorage.getItem('ss-auth') === '1') {
+    const lock = document.getElementById('pin-lock');
+    if (lock) lock.style.display = 'none';
+    document.body.style.overflow = '';
+    return;
+  }
+
+  document.body.style.overflow = 'hidden';
+
+  let entered = '';
+  const dots = document.querySelectorAll('.pin-dot');
+  const keys = document.querySelectorAll('.pin-key');
+  const errorEl = document.getElementById('pin-error');
+  const lockEl = document.getElementById('pin-lock');
+  const iconEl = document.getElementById('pin-icon');
+
+  function updateDots() {
+    dots.forEach((dot, i) => {
+      if (i < entered.length) {
+        dot.classList.add('filled');
+        dot.style.backgroundColor = '#10b981';
+        dot.style.borderColor = '#10b981';
+        dot.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.5)';
+      } else {
+        dot.classList.remove('filled');
+        dot.style.backgroundColor = 'transparent';
+        dot.style.borderColor = '';
+        dot.style.boxShadow = '';
+      }
+    });
+  }
+
+  function shakeError() {
+    errorEl.style.opacity = '1';
+    if (window.gsap) {
+      gsap.timeline()
+        .to(lockEl, { x: -12, duration: 0.06, ease: 'power2.out' })
+        .to(lockEl, { x: 12, duration: 0.06, ease: 'power2.out' })
+        .to(lockEl, { x: -8, duration: 0.06, ease: 'power2.out' })
+        .to(lockEl, { x: 8, duration: 0.06, ease: 'power2.out' })
+        .to(lockEl, { x: -4, duration: 0.06, ease: 'power2.out' })
+        .to(lockEl, { x: 0, duration: 0.06, ease: 'power2.out' });
+
+      gsap.to(iconEl, {
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        borderColor: 'rgba(239, 68, 68, 0.2)',
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1,
+      });
+    }
+
+    dots.forEach(dot => {
+      if (window.gsap) {
+        gsap.to(dot, { backgroundColor: '#ef4444', borderColor: '#ef4444', duration: 0.15 });
+      }
+    });
+
+    setTimeout(() => {
+      entered = '';
+      updateDots();
+      errorEl.style.opacity = '0';
+      if (iconEl) {
+        iconEl.style.backgroundColor = '';
+        iconEl.style.borderColor = '';
+      }
+    }, 800);
+  }
+
+  function unlock() {
+    sessionStorage.setItem('ss-auth', '1');
+
+    if (window.gsap) {
+      gsap.to(lockEl, {
+        y: '-100%',
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power3.inOut',
+        onComplete: () => {
+          lockEl.style.display = 'none';
+          document.body.style.overflow = '';
+          window.dispatchEvent(new CustomEvent('pin-unlocked'));
+        }
+      });
+    } else {
+      lockEl.style.display = 'none';
+      document.body.style.overflow = '';
+      window.dispatchEvent(new CustomEvent('pin-unlocked'));
+    }
+  }
+
+  keys.forEach(key => {
+    key.addEventListener('click', function() {
+      const digit = this.dataset.digit;
+      const action = this.dataset.action;
+
+      // Spring effect on key
+      if (window.gsap) {
+        gsap.fromTo(this, { scale: 0.93 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+      }
+
+      if (action === 'delete') {
+        entered = entered.slice(0, -1);
+        updateDots();
+        return;
+      }
+
+      if (!digit || entered.length >= MAX_LENGTH) return;
+
+      entered += digit;
+      updateDots();
+
+      // Animate the dot
+      const dotIndex = entered.length - 1;
+      if (dots[dotIndex] && window.gsap) {
+        gsap.fromTo(dots[dotIndex], { scale: 1.3 }, { scale: 1, duration: 0.3, ease: 'back.out(3)' });
+      }
+
+      if (entered.length === MAX_LENGTH) {
+        setTimeout(() => {
+          if (entered === CORRECT_PIN) {
+            unlock();
+          } else {
+            shakeError();
+          }
+        }, 150);
+      }
+    });
+  });
+
+  // Handle physical keyboard
+  document.addEventListener('keydown', function(e) {
+    if (e.key >= '0' && e.key <= '9') {
+      const btn = document.querySelector(`[data-digit="${e.key}"]`);
+      if (btn) btn.click();
+    } else if (e.key === 'Backspace') {
+      const del = document.querySelector('[data-action="delete"]');
+      if (del) del.click();
+    }
+  });
+})();
+</script>

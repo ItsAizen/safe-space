@@ -1,1 +1,0 @@
-{"installCommand": "npm install --legacy-peer-deps", "devCommand": "astro dev", "buildCommand": "astro build"}

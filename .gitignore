@@ -2,11 +2,17 @@
 dist/
 .vercel/
 .astro/
+output/
+
+# dependencies
 node_modules/
 
 # logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # env
 .env
@@ -16,6 +22,13 @@ npm-debug.log*
 # os
 .DS_Store
 Thumbs.db
+
+# ide
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # fonts (binary, not committed)
 public/fonts/*.ttf

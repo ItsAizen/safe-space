@@ -1,70 +1,167 @@
 ---
 ---
 
-<div id="live-counter" class="glass-lg p-6 rounded-2xl relative overflow-hidden" aria-live="polite" aria-label="روزشمار زنده از ۱ شهریور ۱۴۰۵">
-  <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/10 via-transparent to-[var(--color-accent)]/5" aria-hidden="true"></div>
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--color-accent)_0%,_transparent_70%)] opacity-20" aria-hidden="true"></div>
+<section id="live-counter" class="glass-card p-6 glow-border">
+  <!-- Header -->
+  <div class="flex items-center gap-2 mb-5">
+    <div class="w-1.5 h-1.5 rounded-full bg-neon-emerald animate-pulse-glow"></div>
+    <h2 class="text-xs font-medium text-white/40 tracking-wider uppercase">فرکانس مشترک از ۱ شهریور ۱۴۰۵</h2>
+  </div>
 
-  <header class="relative mb-6">
-    <h2 class="text-heading font-semibold text-[var(--color-text)] flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse-glow" aria-hidden="true"></span>
-      فرکانس مشترک از ۱ شهریور ۱۴۰۵
-    </h2>
-  </header>
+  <!-- Counter Grid -->
+  <div class="grid grid-cols-4 gap-3">
+    <!-- Days -->
+    <div class="text-center">
+      <div class="relative">
+        <span id="counter-days" class="block text-3xl font-bold text-neon-emerald tabular-nums neon-text leading-none">0</span>
+        <div class="absolute inset-0 bg-neon-emerald/5 blur-xl rounded-full"></div>
+      </div>
+      <span class="text-[10px] text-white/30 mt-2 block tracking-wider">روز</span>
+    </div>
 
-  <div class="grid grid-cols-4 gap-3 relative" role="timer">
-    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="days">
-      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="روز">0</div>
-      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">روز</div>
-      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+    <!-- Hours -->
+    <div class="text-center">
+      <div class="relative">
+        <span id="counter-hours" class="block text-3xl font-bold text-neon-emerald/80 tabular-nums leading-none">00</span>
+      </div>
+      <span class="text-[10px] text-white/30 mt-2 block tracking-wider">ساعت</span>
     </div>
-    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="hours">
-      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="ساعت">00</div>
-      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">ساعت</div>
-      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+
+    <!-- Minutes -->
+    <div class="text-center">
+      <div class="relative">
+        <span id="counter-minutes" class="block text-3xl font-bold text-neon-emerald/60 tabular-nums leading-none">00</span>
+      </div>
+      <span class="text-[10px] text-white/30 mt-2 block tracking-wider">دقیقه</span>
     </div>
-    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="minutes">
-      <div class="counter-value text-display-md font-bold text-[var(--color-text)] tabular-nums" data-value="0" aria-label="دقیقه">00</div>
-      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">دقیقه</div>
-      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
-    </div>
-    <div class="counter-item glass p-4 rounded-xl text-center group" data-unit="seconds">
-      <div class="counter-value text-display-md font-bold text-[var(--color-accent)] tabular-nums" data-value="0" aria-label="ثانیه">00</div>
-      <div class="counter-label text-caption text-[var(--color-text-muted)] mt-1">ثانیه</div>
-      <div class="counter-glow absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/30 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></div>
+
+    <!-- Seconds -->
+    <div class="text-center">
+      <div class="relative">
+        <span id="counter-seconds" class="block text-3xl font-bold text-neon-emerald/40 tabular-nums leading-none">00</span>
+      </div>
+      <span class="text-[10px] text-white/30 mt-2 block tracking-wider">ثانیه</span>
     </div>
   </div>
 
-  <div class="mt-6 pt-4 border-t border-[var(--color-border)] relative flex items-center justify-between">
-    <span class="text-micro text-[var(--color-text-subtle)]">به‌روزرسانی لحظه‌ای</span>
-    <div class="flex items-center gap-1.5" aria-hidden="true">
-      <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse-glow"></span>
-      <span class="text-micro text-[var(--color-accent)] font-medium">ZIND</span>
-    </div>
-  </div>
-</div>
+  <!-- Subtle bottom bar -->
+  <div class="mt-5 h-px bg-gradient-to-l from-transparent via-neon-emerald/20 to-transparent"></div>
+  <p class="text-center text-[11px] text-white/25 mt-3">هر ثانیه با هم</p>
+</section>
 
-<script type="module" src="/scripts/live-counter.js"></script>
+<script is:inline>
+(function() {
+  // 1 Shahrivar 1405 = 2026-08-23T00:00:00+03:30 (Iran time)
+  const MILESTONE = new Date('2026-08-23T00:00:00+03:30').getTime();
+
+  const daysEl = document.getElementById('counter-days');
+  const hoursEl = document.getElementById('counter-hours');
+  const minutesEl = document.getElementById('counter-minutes');
+  const secondsEl = document.getElementById('counter-seconds');
+
+  let prevDays = '', prevHours = '', prevMinutes = '', prevSeconds = '';
+
+  function pad2(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function toPersianDigits(str) {
+    return str.replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+  }
+
+  function update() {
+    const now = Date.now();
+    const diff = now - MILESTONE;
+
+    if (diff < 0) {
+      daysEl.textContent = toPersianDigits('0');
+      hoursEl.textContent = toPersianDigits('00');
+      minutesEl.textContent = toPersianDigits('00');
+      secondsEl.textContent = toPersianDigits('00');
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const dStr = String(days);
+    const hStr = pad2(hours);
+    const mStr = pad2(minutes);
+    const sStr = pad2(seconds);
+
+    // Animate changes with GSAP
+    if (window.gsap) {
+      if (sStr !== prevSeconds) {
+        animateDigit(secondsEl, toPersianDigits(sStr));
+      }
+      if (mStr !== prevMinutes) {
+        animateDigit(minutesEl, toPersianDigits(mStr));
+      }
+      if (hStr !== prevHours) {
+        animateDigit(hoursEl, toPersianDigits(hStr));
+      }
+      if (dStr !== prevDays) {
+        animateDigit(daysEl, toPersianDigits(dStr));
+      }
+    } else {
+      daysEl.textContent = toPersianDigits(dStr);
+      hoursEl.textContent = toPersianDigits(hStr);
+      minutesEl.textContent = toPersianDigits(mStr);
+      secondsEl.textContent = toPersianDigits(sStr);
+    }
+
+    prevDays = dStr;
+    prevHours = hStr;
+    prevMinutes = mStr;
+    prevSeconds = sStr;
+  }
+
+  function animateDigit(el, value) {
+    gsap.fromTo(el, {
+      y: -4,
+      opacity: 0.5,
+    }, {
+      y: 0,
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.out',
+      onStart: () => {
+        el.textContent = value;
+      }
+    });
+  }
+
+  update();
+  setInterval(update, 1000);
+
+  // Entrance animation
+  if (window.gsap) {
+    const section = document.getElementById('live-counter');
+    gsap.from(section, {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+      delay: 0.2,
+    });
+  }
+})();
+</script>
 
 <style>
-  .counter-value {
-    transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), color 150ms ease;
+  html.light #live-counter {
+    @apply bg-white/70 border-black/[0.06];
   }
-
-  .counter-value.animate-scale-in {
-    transform: scale(1.1);
-    color: var(--color-accent);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .counter-value {
-      transition: none !important;
-    }
-    .counter-value.animate-scale-in {
-      transform: none !important;
-    }
-    .animate-pulse-glow {
-      animation: none !important;
-    }
-  }
+  html.light #live-counter .text-white\/40 { @apply text-gray-500; }
+  html.light #live-counter .text-white\/30 { @apply text-gray-400; }
+  html.light #live-counter .text-white\/25 { @apply text-gray-400; }
+  html.light #live-counter .neon-text { text-shadow: none; @apply text-emerald-600; }
+  html.light #live-counter #counter-days { @apply text-emerald-600; }
+  html.light #live-counter #counter-hours { @apply text-emerald-600/80; }
+  html.light #live-counter #counter-minutes { @apply text-emerald-600/60; }
+  html.light #live-counter #counter-seconds { @apply text-emerald-600/40; }
+  html.light #live-counter .via-neon-emerald\/20 { --tw-gradient-via: rgba(16, 185, 129, 0.15); }
 </style>

@@ -1,76 +1,24 @@
 {
   "name": "Safe Space",
   "short_name": "Safe Space",
-  "description": "فضای اختصاصی و امن برای دو نفر",
+  "description": "فضای امن مشترک مهرداد و سوگل",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#090a0f",
   "theme_color": "#090a0f",
-  "scope": "/",
+  "orientation": "portrait",
   "lang": "fa",
   "dir": "rtl",
   "icons": [
     {
-      "src": "/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
-      "src": "/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
     }
-  ],
-  "categories": ["lifestyle", "social"],
-  "screenshots": [],
-  "shortcuts": [
-    {
-      "name": "افزودن خاطره",
-      "short_name": "خاطره جدید",
-      "description": "ثبت خاطره جدید در Safe Space",
-      "url": "/?action=add",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    }
-  ],
-  "prefer_related_applications": false,
-  "related_applications": []
+  ]
 }

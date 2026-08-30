@@ -1,132 +1,310 @@
 ---
-const MEHRDAD_MOODS = [
-  { value: 'ریلکس / خفن', label: 'ریلکس / خفن', emoji: '😎' },
-  { value: 'خسته', label: 'خسته', emoji: '🫠' },
-  { value: 'پشم‌ریزون', label: 'پشم‌ریزون', emoji: '🤯' },
-  { value: 'چای به دست', label: 'چای به دست', emoji: '🍵' },
-];
-
-const SOGOL_MOODS = [
-  { value: 'گرگی / مود', label: 'گرگی / مود', emoji: '🐺' },
-  { value: 'مظلوم', label: 'مظلوم', emoji: '🥺' },
-  { value: 'در حال پاره شدن', label: 'در حال پاره شدن', emoji: '😂' },
-  { value: 'شکر‌لازم', label: 'شکر‌لازم', emoji: '🍧' },
-];
 ---
 
-<div id="add-memory-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-drawer" role="document">
-    <div class="modal-handle" aria-hidden="true"></div>
+<!-- Floating Action Button -->
+<button
+  id="fab-add"
+  type="button"
+  class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 btn-primary flex items-center gap-2 text-sm font-bold shadow-glow-md safe-bottom"
+  style="border-radius: 16px; padding: 14px 24px;"
+>
+  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+  <span>ثبت خاطره</span>
+</button>
 
-    <header class="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
-      <h2 id="modal-title" class="text-heading font-semibold text-[var(--color-text)]">ثبت خاطره جدید</h2>
-      <button type="button" class="btn btn-ghost p-2 rounded-xl focus-ring" id="close-modal" aria-label="بستن">
-        <svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
+<!-- Drawer Overlay -->
+<div id="drawer-overlay" class="overlay opacity-0 pointer-events-none z-40" style="transition: opacity 0.3s;"></div>
+
+<!-- Slide-Up Drawer -->
+<div
+  id="memory-drawer"
+  class="fixed inset-x-0 bottom-0 z-50 translate-y-full"
+  style="transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);"
+>
+  <div class="relative bg-surface-dark-elevated rounded-t-3xl border-t border-glass-border max-h-[85dvh] flex flex-col overflow-hidden"
+    style="box-shadow: 0 -8px 40px rgba(0,0,0,0.4);">
+
+    <!-- Handle bar -->
+    <div class="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle">
+      <div class="w-10 h-1 rounded-full bg-white/15"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 pb-4 border-b border-white/[0.06]">
+      <h3 class="text-base font-bold text-white/90">ثبت خاطره جدید</h3>
+      <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center p-0 rounded-lg">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-    </header>
+    </div>
 
-    <form id="memory-form" class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-5" novalidate>
+    <!-- Form -->
+    <form id="memory-form" class="flex-1 overflow-y-auto px-6 py-5 space-y-5" style="-webkit-overflow-scrolling:touch;">
+      <!-- Title -->
       <div>
-        <label for="title" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">عنوان خاطره</label>
-        <input type="text" id="title" name="title" class="input-field" placeholder="مثل: اولین کوaffee صبحگاهی" required maxlength="60" autocomplete="off" />
+        <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">عنوان</label>
+        <input type="text" name="title" required placeholder="عنوان خاطره..." class="input-field" maxlength="120" />
       </div>
 
+      <!-- Description -->
       <div>
-        <label for="description" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">توضیحات</label>
-        <textarea id="description" name="description" class="input-field min-h-[100px] resize-y" placeholder="جزئیات خاطره را بنویسید..." required maxlength="500"></textarea>
+        <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">توضیحات</label>
+        <textarea name="description" rows="3" placeholder="درباره این خاطره..." class="input-field resize-none" maxlength="1000"></textarea>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <!-- Date & Time -->
+      <div class="grid grid-cols-2 gap-3">
         <div>
-          <label for="date" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">تاریخ (شمسی)</label>
-          <input type="text" id="date" name="date" class="input-field text-center" placeholder="۱۴۰۵/۰۶/۰۱" required maxlength="10" autocomplete="off" />
+          <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">تاریخ</label>
+          <input type="date" name="date" class="input-field text-sm" />
         </div>
         <div>
-          <label for="time" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">ساعت</label>
-          <input type="time" id="time" name="time" class="input-field" required />
+          <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">ساعت</label>
+          <input type="time" name="time" class="input-field text-sm" />
         </div>
       </div>
 
+      <!-- Song -->
       <div>
-        <label for="song" class="block text-body-sm font-medium text-[var(--color-text)] mb-2">آهنگ (اختیاری)</label>
-        <input type="text" id="song" name="song" class="input-field" placeholder="مثل: حال نرم - امین تیجایی" maxlength="80" autocomplete="off" />
+        <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">آهنگ (اختیاری)</label>
+        <input type="text" name="song" placeholder="نام آهنگ..." class="input-field" />
       </div>
 
-      <fieldset>
-        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">خالق خاطره</legend>
-        <div class="flex items-center gap-4">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="author" value="mehrdad" class="sr-only peer" checked />
-            <span class="author-chip glass px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-body font-medium text-[var(--color-text-muted)] peer-checked:border-[var(--color-accent)] peer-checked:bg-[rgba(16,185,129,0.1)] peer-checked:text-[var(--color-accent)] peer-checked:shadow-[0_0_12px_rgba(16,185,129,0.2)] transition-all duration-300">مهرداد</span>
+      <!-- Mehrdad's Mood -->
+      <div>
+        <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت مهرداد</label>
+        <div class="flex flex-wrap gap-2" id="mehrdad-moods">
+          <button type="button" data-mood="mehrdad" data-value="😎 ریلکس / خفن" class="chip"><span>😎</span> ریلکس / خفن</button>
+          <button type="button" data-mood="mehrdad" data-value="🫠 خسته" class="chip"><span>🫠</span> خسته</button>
+          <button type="button" data-mood="mehrdad" data-value="🤯 پشم‌ریزون" class="chip"><span>🤯</span> پشم‌ریزون</button>
+          <button type="button" data-mood="mehrdad" data-value="🍵 چای به دست" class="chip"><span>🍵</span> چای به دست</button>
+          <button type="button" data-mood="mehrdad" data-value="🔥 حال خوب" class="chip"><span>🔥</span> حال خوب</button>
+          <button type="button" data-mood="mehrdad" data-value="😴 خواب‌آلود" class="chip"><span>😴</span> خواب‌آلود</button>
+        </div>
+      </div>
+
+      <!-- Sogol's Mood -->
+      <div>
+        <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت سوگل</label>
+        <div class="flex flex-wrap gap-2" id="sogol-moods">
+          <button type="button" data-mood="sogol" data-value="🐺 گرگی / مود" class="chip"><span>🐺</span> گرگی / مود</button>
+          <button type="button" data-mood="sogol" data-value="🥺 مظلوم" class="chip"><span>🥺</span> مظلوم</button>
+          <button type="button" data-mood="sogol" data-value="😂 در حال پاره شدن" class="chip"><span>😂</span> در حال پاره شدن</button>
+          <button type="button" data-mood="sogol" data-value="🍧 شکر‌لازم" class="chip"><span>🍧</span> شکر‌لازم</button>
+          <button type="button" data-mood="sogol" data-value="🌸 حال خوب" class="chip"><span>🌸</span> حال خوب</button>
+          <button type="button" data-mood="sogol" data-value="☕ قهوه‌خور" class="chip"><span>☕</span> قهوه‌خور</button>
+        </div>
+      </div>
+
+      <!-- Author selector -->
+      <div>
+        <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">ثبت توسط</label>
+        <div class="flex gap-3" id="author-selector">
+          <label class="flex-1 relative">
+            <input type="radio" name="author" value="mehrdad" class="peer sr-only" checked />
+            <div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">
+              مهرداد
+            </div>
           </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="author" value="sogol" class="sr-only peer" />
-            <span class="author-chip glass px-4 py-2.5 rounded-xl border border-[var(--color-border)] text-body font-medium text-[var(--color-text-muted)] peer-checked:border-[var(--color-accent)] peer-checked:bg-[rgba(16,185,129,0.1)] peer-checked:text-[var(--color-accent)] peer-checked:shadow-[0_0_12px_rgba(16,185,129,0.2)] transition-all duration-300">سوگل</span>
+          <label class="flex-1 relative">
+            <input type="radio" name="author" value="sogol" class="peer sr-only" />
+            <div class="cursor-pointer text-center py-3 rounded-xl border border-glass-border bg-white/[0.03] text-sm font-medium text-white/50 transition-all duration-200 peer-checked:border-neon-emerald/40 peer-checked:bg-neon-emerald/[0.08] peer-checked:text-neon-emerald hover:bg-white/[0.06]">
+              سوگل
+            </div>
           </label>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">حالت مهرداد</legend>
-        <div class="mood-grid" id="mood-mehrdad" role="radiogroup" aria-label="انتخاب حالت مهرداد">
-          {MEHRDAD_MOODS.map(mood => (
-            <button type="button" class="mood-chip" data-mood={mood.value} role="radio" aria-checked="false">
-              <span class="emoji">{mood.emoji}</span>
-              <span>{mood.label}</span>
-            </button>
-          ))}
-        </div>
-        <input type="hidden" name="moodMehrdad" id="mood-mehrdad-input" value={MEHRDAD_MOODS[0].value} />
-      </fieldset>
-
-      <fieldset>
-        <legend class="text-body-sm font-medium text-[var(--color-text)] mb-3">حالت سوگل</legend>
-        <div class="mood-grid" id="mood-sogol" role="radiogroup" aria-label="انتخاب حالت سوگل">
-          {SOGOL_MOODS.map(mood => (
-            <button type="button" class="mood-chip" data-mood={mood.value} role="radio" aria-checked="false">
-              <span class="emoji">{mood.emoji}</span>
-              <span>{mood.label}</span>
-            </button>
-          ))}
-        </div>
-        <input type="hidden" name="moodSogol" id="mood-sogol-input" value={SOGOL_MOODS[0].value} />
-      </fieldset>
-
-      <div class="pt-4 border-t border-[var(--color-border)]">
-        <button type="submit" class="btn btn-primary w-full py-3.5 rounded-xl focus-ring">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+      <!-- Submit button -->
+      <button type="submit" id="submit-btn" class="btn-primary w-full py-3.5 text-sm mt-2">
+        <span id="submit-text">ثبت خاطره</span>
+        <div id="submit-spinner" class="hidden">
+          <svg class="animate-spin w-5 h-5 mx-auto" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          ذخیره خاطره
-        </button>
-      </div>
+        </div>
+      </button>
+
+      <!-- Bottom safe area -->
+      <div class="h-4"></div>
     </form>
   </div>
 </div>
 
-<script type="module" src="/scripts/add-memory-modal.js"></script>
+<script is:inline>
+(function() {
+  const fab = document.getElementById('fab-add');
+  const drawer = document.getElementById('memory-drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  const closeBtn = document.getElementById('drawer-close');
+  const form = document.getElementById('memory-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitText = document.getElementById('submit-text');
+  const submitSpinner = document.getElementById('submit-spinner');
 
-<style>
-  .mood-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
+  let selectedMehrdadMood = '';
+  let selectedSogolMood = '';
 
-  @media (max-width: 430px) {
-    .modal-drawer {
-      max-height: 100vh;
-      border-radius: 0;
+  function openDrawer() {
+    drawer.style.transform = 'translateY(0)';
+    overlay.style.opacity = '1';
+    overlay.classList.remove('pointer-events-none');
+    overlay.classList.add('pointer-events-auto');
+    document.body.style.overflow = 'hidden';
+
+    if (window.gsap) {
+      const inner = drawer.querySelector('div');
+      gsap.from(inner || drawer, {
+        y: 100,
+        duration: 0.5,
+        ease: 'power3.out',
+      });
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .modal-backdrop, .modal-drawer, .mood-chip, .author-chip {
-      transition: none !important;
+  function closeDrawer() {
+    drawer.style.transform = 'translateY(100%)';
+    overlay.style.opacity = '0';
+    overlay.classList.add('pointer-events-none');
+    overlay.classList.remove('pointer-events-auto');
+    document.body.style.overflow = '';
+  }
+
+  fab.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+
+  // Set default date/time
+  function setDefaults() {
+    const now = new Date();
+    const dateInput = form.querySelector('[name="date"]');
+    const timeInput = form.querySelector('[name="time"]');
+    if (dateInput) {
+      dateInput.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    }
+    if (timeInput) {
+      timeInput.value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }
   }
-</style>
+
+  // Mood chips
+  document.querySelectorAll('[data-mood]').forEach(chip => {
+    chip.addEventListener('click', function(e) {
+      e.preventDefault();
+      const type = this.dataset.mood;
+      const value = this.dataset.value;
+
+      // Deselect siblings
+      const siblings = this.parentElement.querySelectorAll('.chip');
+      siblings.forEach(s => s.classList.remove('active'));
+
+      if (type === 'mehrdad') {
+        selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
+        if (selectedMehrdadMood) this.classList.add('active');
+      } else {
+        selectedSogolMood = selectedSogolMood === value ? '' : value;
+        if (selectedSogolMood) this.classList.add('active');
+      }
+
+      // Spring feedback
+      if (window.gsap) {
+        gsap.fromTo(this, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(3)' });
+      }
+    });
+  });
+
+  // Form submission
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const dateVal = formData.get('date');
+    const timeVal = formData.get('time');
+
+    let memoryDate;
+    if (dateVal && timeVal) {
+      memoryDate = new Date(`${dateVal}T${timeVal}:00`);
+    } else if (dateVal) {
+      memoryDate = new Date(`${dateVal}T${new Date().toTimeString().slice(0, 8)}`);
+    } else {
+      memoryDate = new Date();
+    }
+
+    const payload = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      song: formData.get('song') || null,
+      mehrdadMood: selectedMehrdadMood || null,
+      sogolMood: selectedSogolMood || null,
+      author: formData.get('author'),
+      date: memoryDate.toISOString(),
+    };
+
+    // Show loading
+    submitText.classList.add('hidden');
+    submitSpinner.classList.remove('hidden');
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/memories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const newMemory = await res.json();
+        closeDrawer();
+        form.reset();
+        selectedMehrdadMood = '';
+        selectedSogolMood = '';
+        document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+        setDefaults();
+
+        // Optimistic UI: add to timeline
+        if (window.loadMemories) window.loadMemories();
+        window.showToast?.('خاطره ثبت شد ✨');
+      } else {
+        throw new Error('Failed to save');
+      }
+    } catch (err) {
+      console.error('Save failed:', err);
+      window.showToast?.('خطا در ذخیره‌سازی', '❌');
+    } finally {
+      submitText.classList.remove('hidden');
+      submitSpinner.classList.add('hidden');
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Swipe down to close
+  let startY = 0;
+  const handle = document.getElementById('drawer-handle');
+  handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+  handle.addEventListener('touchmove', e => {
+    const diff = e.touches[0].clientY - startY;
+    if (diff > 80) closeDrawer();
+  }, { passive: true });
+
+  setDefaults();
+
+  // Light mode overrides
+  const style = document.createElement('style');
+  style.textContent = `
+    html.light #memory-drawer > div { background: #fafaf9; border-color: rgba(0,0,0,0.06); }
+    html.light #memory-drawer .text-white\/90 { color: #1c1917; }
+    html.light #memory-drawer .text-white\/35 { color: rgba(0,0,0,0.4); }
+    html.light #memory-drawer .text-white\/50 { color: rgba(0,0,0,0.5); }
+    html.light #drawer-handle > div { background: rgba(0,0,0,0.12); }
+    html.light #drawer-close { color: rgba(0,0,0,0.4); }
+    html.light #fab-add { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+  `;
+  document.head.appendChild(style);
+})();
+</script>

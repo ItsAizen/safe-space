@@ -3,20 +3,13 @@ import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  output: 'static',
-  adapter: vercel({
-    edgeMiddleware: true,
-    webAnalytics: { enabled: true }
-  }),
   integrations: [tailwind()],
+  output: 'server',
+  adapter: vercel(),
+  server: { port: 4321 },
   vite: {
     optimizeDeps: {
-      include: ['jalali-moment', 'gsap']
+      exclude: ['@vercel/kv']
     }
-  },
-  prefetch: true,
-  compressHTML: true,
-  build: {
-    inlineStylesheets: 'auto'
   }
 });

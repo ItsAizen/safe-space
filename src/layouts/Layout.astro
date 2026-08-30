@@ -4,63 +4,119 @@ interface Props {
   description?: string;
 }
 
-const { title = 'Safe Space', description = 'فضای اختصاصی و امن برای دو نفر' } = Astro.props;
-const base = Astro.site ? new URL(Astro.url.pathname, Astro.site) : new URL(Astro.url.pathname, 'http://localhost');
-const canonicalURL = base.href;
-const socialImage = new URL('/og-image.png', Astro.site || 'http://localhost').href;
+const {
+  title = 'Safe Space | فضای امن مشترک',
+  description = 'پناهگاه مشترک مهرداد و سوگل'
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="fa" dir="rtl" class="h-full">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-    <meta name="theme-color" content="#090a0f" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
-    <meta name="color-scheme" content="dark light" />
-    <meta name="description" content={description} />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Safe Space" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="canonical" href={canonicalURL} />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={socialImage} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={socialImage} />
-    <script is:inline>
-      (function() {
-        try {
-          var theme = localStorage.getItem('theme');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var isDark = theme === 'dark' || (!theme && prefersDark);
-          document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
-        } catch (e) {
-          document.documentElement.dataset.theme = 'dark';
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#090a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content={description} />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+  <title>{title}</title>
+</head>
+<body class="relative min-h-dvh overflow-x-hidden">
+  <!-- Ambient desktop glows -->
+  <div class="ambient-glow bg-neon-emerald/40 -top-40 -right-40 hidden lg:block" style="filter:blur(120px)"></div>
+  <div class="ambient-glow bg-neon-mint/30 bottom-20 -left-40 hidden lg:block" style="filter:blur(150px)"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Main constrained shell -->
+  <div class="relative z-10 mx-auto max-w-[430px] min-h-dvh flex flex-col">
+    <slot />
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Theme initialization (runs before paint) -->
+  <script is:inline>
+    (function() {
+      const saved = localStorage.getItem('ss-theme');
+      if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
+
+  <!-- Particles -->
+  <script is:inline>
+    (function() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let animFrame;
+      let w, h;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+
+      function createParticles() {
+        particles = [];
+        const count = Math.floor((w * h) / 18000);
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 1.5 + 0.3,
+            dx: (Math.random() - 0.5) * 0.3,
+            dy: (Math.random() - 0.5) * 0.2,
+            opacity: Math.random() * 0.3 + 0.05,
+            pulse: Math.random() * Math.PI * 2,
+            pulseSpeed: Math.random() * 0.008 + 0.003,
+          });
         }
-      })();
-    </script>
-  </head>
-  <body class="h-full">
-    <div id="app" class="h-full">
-      <div class="ambient-bg" aria-hidden="true">
-        <div class="ambient-blob"></div>
-        <div class="ambient-blob"></div>
-        <div class="ambient-blob"></div>
-      </div>
-      <main class="mobile-shell h-full flex flex-col" role="main">
-        <slot />
-      </main>
-    </div>
-    <script is:inline src="/scripts/theme-init.js"></script>
-    <script is:inline src="/scripts/pwa-register.js"></script>
-  </body>
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (const p of particles) {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.pulse += p.pulseSpeed;
+          if (p.x < 0) p.x = w;
+          if (p.x > w) p.x = 0;
+          if (p.y < 0) p.y = h;
+          if (p.y > h) p.y = 0;
+          const alpha = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(16, 185, 129, ${alpha})`;
+          ctx.fill();
+        }
+        animFrame = requestAnimationFrame(draw);
+      }
+
+      resize();
+      createParticles();
+      draw();
+      window.addEventListener('resize', () => {
+        resize();
+        createParticles();
+      });
+    })();
+  </script>
+
+  <!-- Service Worker -->
+  <script is:inline>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
 </html>

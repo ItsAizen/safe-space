@@ -1,142 +1,286 @@
 ---
-const { memories, onDelete } = Astro.props;
 ---
 
-<div id="timeline" class="relative" role="list" aria-label="تایم‌لاین خاطرات">
-  <div class="timeline-connector hidden lg:block" aria-hidden="true"></div>
-
-  <div class="space-y-6 relative">
-    {memories.length === 0 && (
-      <div class="glass-lg p-12 rounded-2xl text-center relative z-10" role="status">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[var(--color-accent)]/10 flex items-center justify-center">
-          <svg class="w-8 h-8 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        </div>
-        <h3 class="text-heading font-semibold text-[var(--color-text)]">هنوز خاطره‌ای ثبت نشده</h3>
-        <p class="mt-2 text-body text-[var(--color-text-muted)]">اولین خاطره مشترک‌تان را بسازید</p>
-      </div>
-    )}
-
-    {memories.map((memory, index) => (
-      <article
-        class="timeline-card glass-lg rounded-2xl overflow-hidden relative group animate-fade-in"
-        style={{ animationDelay: `${index * 80}ms` }}
-        data-id={memory.id}
-        role="listitem"
-      >
-        <div class="absolute inset-y-0 right-6 w-0.5 bg-gradient-to-b from-transparent via-[var(--color-border)] to-transparent" aria-hidden="true">
-          {index === memories.length - 1 && (
-            <div class="absolute bottom-0 right-[-3px] w-7 h-7 rounded-full bg-[var(--color-accent)] border-2 border-[var(--color-bg-elevated)] shadow-[0_0_12px_rgba(16,185,129,0.4)]" aria-hidden="true"></div>
-          )}
-        </div>
-
-        <div class="relative p-5 pr-14">
-          <header class="flex items-center justify-between gap-3 mb-4">
-            <div class="flex items-center gap-2.5">
-              <time class="text-micro font-medium text-[var(--color-accent)] px-2.5 py-1 rounded-full glass border border-[var(--color-border)] whitespace-nowrap" datetime={memory.date}>
-                {memory.time} - {memory.date}
-              </time>
-              <span class="text-micro font-medium px-2.5 py-1 rounded-full glass border border-[var(--color-border)] text-[var(--color-text-muted)] whitespace-nowrap">
-                ثبت توسط {memory.author === 'mehrdad' ? 'مهرداد' : 'سوگل'}
-              </span>
-            </div>
-            <button
-              type="button"
-              class="btn btn-ghost p-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity focus-ring"
-              data-delete={memory.id}
-              aria-label={`حذف خاطره: ${memory.title}`}
-            >
-              <svg class="w-5 h-5 text-[var(--color-text-subtle)] hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-            </button>
-          </header>
-
-          <h3 class="text-heading font-semibold text-[var(--color-text)] mb-2">{memory.title}</h3>
-          <p class="text-body text-[var(--color-text-muted)] mb-4 leading-relaxed">{memory.description}</p>
-
-          {memory.song && (
-            <div class="flex items-center gap-2 text-body-sm text-[var(--color-text-muted)] mb-4">
-              <span class="flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-[var(--color-accent)] animate-pulse-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M9 18V5l12-2v13"></path>
-                  <circle cx="6" cy="18" r="3"></circle>
-                  <circle cx="18" cy="16" r="3"></circle>
-                </svg>
-                <span>{memory.song}</span>
-              </span>
-            </div>
-          )}
-
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="mood-badge glass px-3 py-1.5 rounded-full border border-[var(--color-border)] flex items-center gap-1.5">
-              <span class="text-body-sm" aria-hidden="true">😎</span>
-              <span class="text-body-sm font-medium text-[var(--color-text)]">مهرداد: {memory.moodMehrdad}</span>
-            </span>
-            <span class="mood-badge glass px-3 py-1.5 rounded-full border border-[var(--color-border)] flex items-center gap-1.5">
-              <span class="text-body-sm" aria-hidden="true">🐺</span>
-              <span class="text-body-sm font-medium text-[var(--color-text)]">سوگل: {memory.moodSogol}</span>
-            </span>
-          </div>
-        </div>
-      </article>
-    ))}
+<section id="timeline-section" class="relative mt-8 pb-24">
+  <!-- Section header -->
+  <div class="flex items-center gap-2 mb-6 px-1">
+    <div class="w-1 h-4 rounded-full bg-neon-emerald/60"></div>
+    <h2 class="text-sm font-medium text-white/50 tracking-wide">تایم‌لاین خاطرات</h2>
+    <div class="flex-1 h-px bg-white/[0.06]"></div>
   </div>
-</div>
 
-<script>
-  (() => {
-    const container = document.getElementById('timeline');
-    if (!container) return;
+  <!-- Timeline container -->
+  <div id="timeline-container" class="relative">
+    <!-- Timeline line -->
+    <div class="timeline-line"></div>
 
-    container.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-delete]');
-      if (btn) {
-        const id = btn.dataset.delete;
-        if (id && confirm('آیا مطمئنید می‌خواهید این خاطره حذف شود؟')) {
-          const event = new CustomEvent('memory-delete', { detail: { id } });
-          document.dispatchEvent(event);
-        }
-      }
-    });
-  })();
-</script>
+    <!-- Memory cards injected here by JS -->
+    <div id="timeline-list" class="relative space-y-6"></div>
+
+    <!-- Empty state -->
+    <div id="timeline-empty" class="relative py-16 text-center hidden">
+      <div class="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto mb-4">
+        <svg class="w-5 h-5 text-white/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+          <polyline points="17 21 17 13 7 13 7 21" />
+          <polyline points="7 3 7 8 15 8" />
+        </svg>
+      </div>
+      <p class="text-sm text-white/30">هنوز خاطره‌ای ثبت نشده</p>
+      <p class="text-xs text-white/15 mt-1">اولین خاطره‌تون رو ثبت کنید</p>
+    </div>
+  </div>
+</section>
 
 <style>
-  .timeline-card {
-    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, border-color 200ms ease;
-  }
-
-  .timeline-card:hover {
-    transform: translateX(-4px);
-    box-shadow: var(--shadow-glass-lg);
-    border-color: var(--color-border-strong);
-  }
-
-  .mood-badge {
-    transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .mood-badge:hover {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 12px var(--color-accent-glow);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .timeline-card, .mood-badge {
-      transition: none !important;
-    }
-    .timeline-card:hover {
-      transform: none !important;
-    }
-    .animate-fade-in {
-      animation: none !important;
-      opacity: 1 !important;
-    }
-  }
+  html.light #timeline-section .text-white\/50 { @apply text-gray-500; }
+  html.light #timeline-section .bg-white\/\[0\.04\] { @apply bg-black/[0.02]; }
+  html.light #timeline-section .border-white\/\[0\.08\] { @apply border-black/[0.06]; }
+  html.light #timeline-section .text-white\/30 { @apply text-gray-400; }
+  html.light #timeline-section .text-white\/15 { @apply text-gray-300; }
+  html.light #timeline-section .h-px.bg-white\/\[0\.06\] { @apply bg-black/[0.06]; }
 </style>
+
+<script is:inline>
+(function() {
+  const MEHRDAD_MOODS = [
+    { emoji: '😎', label: 'ریلکس / خفن' },
+    { emoji: '🫠', label: 'خسته' },
+    { emoji: '🤯', label: 'پشم‌ریزون' },
+    { emoji: '🍵', label: 'چای به دست' },
+    { emoji: '🔥', label: 'حال خوب' },
+    { emoji: '😴', label: 'خواب‌آلود' },
+  ];
+
+  const SOGOL_MOODS = [
+    { emoji: '🐺', label: 'گرگی / مود' },
+    { emoji: '🥺', label: 'مظلوم' },
+    { emoji: '😂', label: 'در حال پاره شدن' },
+    { emoji: '🍧', label: 'شکر‌لازم' },
+    { emoji: '🌸', label: 'حال خوب' },
+    { emoji: '☕', label: 'قهوه‌خور' },
+  ];
+
+  function toPersianDigits(str) {
+    return String(str).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+  }
+
+  function formatJalali(dateStr) {
+    const d = new Date(dateStr);
+    // Simple Jalali conversion (approximate)
+    const gy = d.getFullYear();
+    const gm = d.getMonth() + 1;
+    const gd = d.getDate();
+
+    // Gregorian to Jalali
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let gy2 = (gm > 2) ? (gy + 1) : gy;
+    let days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+    let jy = -1595 + (33 * Math.floor(days / 12053));
+    days %= 12053;
+    jy += 4 * Math.floor(days / 1461);
+    days %= 1461;
+    if (days > 365) {
+      jy += Math.floor((days - 1) / 365);
+      days = (days - 1) % 365;
+    }
+    let jm, jd;
+    if (days < 186) {
+      jm = 1 + Math.floor(days / 31);
+      jd = 1 + (days % 31);
+    } else {
+      jm = 7 + Math.floor((days - 186) / 30);
+      jd = 1 + ((days - 186) % 30);
+    }
+
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+
+    return `${toPersianDigits(hh)}:${toPersianDigits(mm)} - ${toPersianDigits(jy)}/${toPersianDigits(String(jm).padStart(2, '0'))}/${toPersianDigits(String(jd).padStart(2, '0'))}`;
+  }
+
+  function createMemoryCard(memory, index) {
+    const card = document.createElement('div');
+    card.className = 'gsap-stagger relative pr-11';
+    card.dataset.id = memory.id;
+
+    const authorLabel = memory.author === 'mehrdad' ? 'ثبت توسط مهرداد' : 'ثبت توسط سوگل';
+    const authorColor = memory.author === 'mehrdad' ? 'text-neon-emerald/70' : 'text-purple-400/70';
+
+    let songHtml = '';
+    if (memory.song) {
+      songHtml = `
+        <div class="mt-3 inline-flex items-center gap-2 rounded-full bg-neon-emerald/[0.06] border border-neon-emerald/[0.12] px-3 py-1.5">
+          <div class="audio-wave">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <span class="text-xs text-neon-emerald/70">${memory.song}</span>
+        </div>
+      `;
+    }
+
+    // Build mood pills
+    let moodHtml = '';
+    if (memory.mehrdadMood || memory.sogolMood) {
+      const pills = [];
+      if (memory.mehrdadMood) {
+        const m = MEHRDAD_MOODS.find(m => m.label === memory.mehrdadMood) || { emoji: '😎', label: memory.mehrdadMood };
+        pills.push(`<span class="chip text-[11px]">${m.emoji} ${m.label}</span>`);
+      }
+      if (memory.sogolMood) {
+        const m = SOGOL_MOODS.find(m => m.label === memory.sogolMood) || { emoji: '🐺', label: memory.sogolMood };
+        pills.push(`<span class="chip text-[11px]">${m.emoji} ${m.label}</span>`);
+      }
+      moodHtml = `<div class="flex flex-wrap gap-2 mt-3">${pills.join('')}</div>`;
+    }
+
+    card.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="glass-card p-5 ml-0">
+        <!-- Top bar -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="text-[10px] font-medium text-white/30 bg-white/[0.04] rounded-md px-2 py-1 tracking-wider tabular-nums">${formatJalali(memory.createdAt || memory.date)}</span>
+            <span class="text-[10px] font-medium ${authorColor}">${authorLabel}</span>
+          </div>
+          <button type="button" data-delete-id="${memory.id}" class="delete-btn relative w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200 active:scale-90" aria-label="حذف خاطره">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            <!-- Delete popover -->
+            <div class="delete-popover opacity-0 pointer-events-none transition-all duration-200" data-confirm-for="${memory.id}">
+              <span class="text-xs text-white/60">حذف شود؟</span>
+              <button type="button" data-confirm-delete="${memory.id}" class="text-xs text-red-400 hover:text-red-300 font-medium px-2 py-1 rounded-lg hover:bg-red-400/[0.1] transition-all">بله</button>
+              <button type="button" data-cancel-delete="${memory.id}" class="text-xs text-white/40 hover:text-white/60 font-medium px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-all">خیر</button>
+            </div>
+          </button>
+        </div>
+
+        <!-- Title & Description -->
+        <h3 class="text-[15px] font-bold text-white/90 leading-relaxed mb-1.5">${memory.title}</h3>
+        <p class="text-[13px] text-white/50 leading-[1.85]">${memory.description || ''}</p>
+
+        ${songHtml}
+        ${moodHtml}
+      </div>
+    `;
+
+    return card;
+  }
+
+  // Expose render function
+  window.renderTimeline = function(memories) {
+    const list = document.getElementById('timeline-list');
+    const empty = document.getElementById('timeline-empty');
+    list.innerHTML = '';
+
+    if (!memories || memories.length === 0) {
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    empty.classList.add('hidden');
+
+    // Sort newest first
+    memories.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+
+    memories.forEach((mem, i) => {
+      list.appendChild(createMemoryCard(mem, i));
+    });
+
+    // GSAP stagger entrance
+    if (window.gsap) {
+      gsap.from('.gsap-stagger', {
+        y: 30,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: 'power3.out',
+        clearProps: 'all',
+      });
+    }
+
+    // Attach delete handlers
+    attachDeleteHandlers();
+  };
+
+  function attachDeleteHandlers() {
+    document.querySelectorAll('[data-delete-id]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = this.dataset.deleteId;
+        const popover = document.querySelector(`[data-confirm-for="${id}"]`);
+        if (popover) {
+          popover.classList.toggle('opacity-0');
+          popover.classList.toggle('pointer-events-none');
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-confirm-delete]').forEach(btn => {
+      btn.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const id = this.dataset.confirmDelete;
+        try {
+          const res = await fetch('/api/memories', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+          });
+          if (res.ok) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            if (card && window.gsap) {
+              gsap.to(card, {
+                x: -50,
+                opacity: 0,
+                height: 0,
+                padding: 0,
+                marginBottom: 0,
+                duration: 0.4,
+                ease: 'power2.in',
+                onComplete: () => {
+                  card.remove();
+                  window.showToast?.('خاطره حذف شد', '🗑️');
+                }
+              });
+            } else {
+              card?.remove();
+            }
+          }
+        } catch (err) {
+          console.error('Delete failed:', err);
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-cancel-delete]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = this.dataset.cancelDelete;
+        const popover = document.querySelector(`[data-confirm-for="${id}"]`);
+        if (popover) {
+          popover.classList.add('opacity-0');
+          popover.classList.add('pointer-events-none');
+        }
+      });
+    });
+  }
+
+  // Light mode styles for memory cards
+  const style = document.createElement('style');
+  style.textContent = `
+    html.light .glass-card {
+      background: rgba(255,255,255,0.7);
+      border-color: rgba(0,0,0,0.06);
+      box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.8), 0 1px 3px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.04);
+    }
+    html.light [data-delete-id] { color: rgba(0,0,0,0.25); }
+    html.light [data-delete-id]:hover { color: #ef4444; }
+    html.light .timeline-dot { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.3); }
+    html.light .delete-popover { background: rgba(255,255,255,0.95); border-color: rgba(0,0,0,0.06); }
+    html.light .delete-popover span { color: rgba(0,0,0,0.5); }
+  `;
+  document.head.appendChild(style);
+})();
+</script>
