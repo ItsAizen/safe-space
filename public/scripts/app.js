@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   var LS_KEY = 'ss-memories';
   var CORRECT_PIN = '1234';
+  var FA = '\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9';
+  var trashSVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
 
   function getMemories() {
     try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { return []; }
@@ -8,98 +10,121 @@ document.addEventListener('DOMContentLoaded', function () {
   function saveMemories(arr) {
     try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch (e) { }
   }
-  function genId() { return 'm_' + Math.floor(Math.random() * 1000000); }
+  function genId() { return 'm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
   function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function faNum(s) { return String(s).replace(/\d/g, function (d) { return FA.charAt(parseInt(d, 10)); }); }
+  function pad2(n) { return ('0' + n).slice(-2); }
+
+  function formatJalali(dateStr) {
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) d = new Date();
+    var gy = d.getFullYear(), gm = d.getMonth() + 1, gd = d.getDate();
+    var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    var gy2 = gm > 2 ? gy + 1 : gy;
+    var days = 355666 + 365 * gy + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+    var jy = -1595 + 33 * Math.floor(days / 12053); days %= 12053;
+    jy += 4 * Math.floor(days / 1461); days %= 1461;
+    if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+    var jm, jd;
+    if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + days % 31; }
+    else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + (days - 186) % 30; }
+    return faNum(jy) + '/' + faNum(pad2(jm)) + '/' + faNum(pad2(jd));
+  }
+
+  function formatCardDate(dateStr) {
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) d = new Date();
+    return formatJalali(d) + '  \u2022  ' + faNum(pad2(d.getHours())) + ':' + faNum(pad2(d.getMinutes()));
+  }
 
   function showToast(msg) {
     var t = document.getElementById('toast');
     if (!t) return;
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(function () { t.classList.remove('show'); }, 2500);
+    clearTimeout(t._hide);
+    t._hide = setTimeout(function () { t.classList.remove('show'); }, 2500);
   }
 
-  // === RENDER CARDS ===
+  // === CARD BUILDER ===
+  function songHTML(song) {
+    return '<div class="memory-song"><div class="audio-wave"><span></span><span></span><span></span><span></span><span></span></div><span class="memory-song-name">' + esc(song) + '</span></div>';
+  }
+
+  function pillHTML(val, isMehrdad) {
+    return '<span class="memory-tag ' + (isMehrdad ? 'memory-tag--m' : 'memory-tag--s') + '">' + esc(val) + '</span>';
+  }
+
+  function buildCard(m, idx) {
+    var isM = m.author === 'mehrdad';
+    var name = isM ? '\u0645\u0647\u0631\u062F\u0627\u062F' : '\u0633\u0648\u06AF\u0644';
+    var initial = isM ? '\u0645' : '\u0633';
+    var avatar = isM ? '#10b981,#059669' : '#a78bfa,#8b5cf6';
+    var accent = isM ? '#34d399' : '#c4b5fd';
+
+    var desc = m.description ? '<p class="memory-card-desc">' + esc(m.description) + '</p>' : '';
+
+    var pills = '';
+    if (m.mehrdadMood) pills += pillHTML(m.mehrdadMood, true);
+    if (m.sogolMood) pills += pillHTML(m.sogolMood, false);
+    var tagsHTML = pills ? '<div class="memory-card-tags">' + pills + '</div>' : '';
+
+    var song = m.song ? songHTML(m.song) : '';
+
+    var foot = (song || tagsHTML) ? '<footer class="memory-card-foot">' + song + tagsHTML + '</footer>' : '';
+
+    return '<article class="memory-item" data-id="' + m.id + '" style="animation-delay:' + (idx * 50) + 'ms">' +
+      '<span class="memory-item-dot" style="background:' + accent + ';box-shadow:0 0 0 3px rgba(0,0,0,0.06),0 0 14px ' + accent + '66"></span>' +
+      '<div class="memory-card">' +
+        '<header class="memory-card-head">' +
+          '<span class="memory-card-avatar" style="background:linear-gradient(135deg,' + avatar + ')">' + initial + '</span>' +
+          '<span class="memory-card-author" style="color:' + accent + '">' + name + '</span>' +
+          '<span class="memory-card-spacer"></span>' +
+          '<time class="memory-card-date">' + formatCardDate(m.date || m.createdAt) + '</time>' +
+          '<button type="button" class="memory-card-del" data-del="' + m.id + '" aria-label="\u062D\u0630\u0641 \u062E\u0627\u0637\u0631\u0647">' + trashSVG + '</button>' +
+        '</header>' +
+        '<h3 class="memory-card-title">' + esc(m.title) + '</h3>' +
+        desc +
+        foot +
+      '</div>' +
+    '</article>';
+  }
+
   function renderCards() {
     var list = document.getElementById('timeline-list');
     var empty = document.getElementById('timeline-empty');
     if (!list) return;
-    list.innerHTML = '';
     var memories = getMemories();
     if (!memories || memories.length === 0) {
+      list.innerHTML = '';
       if (empty) empty.style.display = '';
       return;
     }
     if (empty) empty.style.display = 'none';
-    memories.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
-
-    memories.forEach(function (m) {
-      var isMehrdad = m.author === 'mehrdad';
-      var accent = isMehrdad ? 'emerald' : 'purple';
-      var accentBg = isMehrdad ? 'bg-emerald-500' : 'bg-purple-500';
-      var accentText = isMehrdad ? 'text-emerald-400' : 'text-purple-400';
-
-      // Song HTML
-      var songHtml = '';
-      if (m.song) {
-        songHtml = '<div class="mt-2 pt-2 border-t border-white/[0.04]">' +
-          '<div class="flex items-center gap-2 text-xs text-white/40">' +
-          '<span class="w-2 h-2 rounded-full bg-emerald-500/60 animate-bounce"></span>' +
-          '<span>' + esc(m.song) + '</span>' +
-          '</div>' +
-          '</div>';
-      }
-
-      // Mood pills
-      var pills = '';
-      if (m.mehrdadMood) pills += '<span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] font-medium bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 hover:bg-emerald-600/20 mr-1.5">' + esc(m.mehrdadMood) + '</span>';
-      if (m.sogolMood) pills += '<span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] font-medium bg-purple-600/10 border border-purple-600/20 text-purple-400 hover:bg-purple-600/20 mr-1.5">' + esc(m.sogolMood) + '</span>';
-      if (pills) pills = '<div class="flex flex-wrap gap-1 mt-2">' + pills + '</div>';
-
-      var card = document.createElement('div');
-      card.className = 'memory-card relative rounded-2xl border border-white/[0.05] bg-white/[0.03] backdrop-blur-xl p-5 shadow-lg shadow-black/10 group';
-      card.setAttribute('data-id', m.id);
-
-      // Determine delete button visibility based on card state
-      var deleteBtn = '';
-      if (m.id) {
-        deleteBtn = '<button type="button" class="absolute top-2 right-2 text-white/20 hover:text-red-400 transition-colors duration-200 hover:bg-red-400/10 rounded-full p-1 group-hover:scale-110" aria-label="حذف خاطره" onclick="event.stopPropagation(); deleteMemory(\'' + m.id + '\')">×</button>';
-      }
-
-      card.innerHTML =
-        '<div class="relative">' +
-          deleteBtn +
-          '<div class="flex items-start gap-3" style="min-height: 80px;">' +
-            '<div class="memory-dot absolute right-2 top-2 w-5 h-5 rounded-full ' + accentBg + ' opacity-80 group-hover:opacity-100 transition-opacity duration-200"></div>' +
-            '<div class="flex-1 min-w-0">' +
-              '<h3 class="text-[14px] font-semibold text-white/90 group-hover:text-' + accent + '-400 transition-colors duration-200 mb-1.5 leading-tight">' + esc(m.title) + '</h3>' +
-              (m.description ? '<p class="text-[12px] text-white/40 line-clamp-2 mb-2 leading-relaxed">' + esc(m.description) + '</p>' : '') +
-              '<div class="flex items-center gap-2 text-xs text-white/50">' +
-                '<span class="flex-1 truncate">' + formatDateRU(m.createdAt) + '</span>' +
-                (m.mehrdadMood || m.sogolMood ? '<span class="flex gap-1">' + pills + '</span>' : '') +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-          (m.song ? songHtml : '') +
-        '</div>';
-
-      list.appendChild(card);
-    });
+    memories.sort(function (a, b) { return new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt); });
+    var html = '';
+    memories.forEach(function (m, i) { html += buildCard(m, i); });
+    list.innerHTML = html;
+    wireDelete(list);
   }
 
-  function formatDateRU(dateStr) {
-    var d = new Date(dateStr);
-    if (isNaN(d.getTime())) d = new Date();
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  function wireDelete(scope) {
+    var list = scope || document.getElementById('timeline-list');
+    list.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteMemory(this.getAttribute('data-del'));
+      });
+    });
   }
 
   function deleteMemory(id) {
     var card = document.querySelector('[data-id="' + id + '"]');
     if (!card) return;
+    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'all 0.3s ease';
+    card.style.transform = 'translateY(12px)';
     setTimeout(function () {
       card.remove();
       var memories = getMemories().filter(function (m) { return m.id !== id; });
@@ -109,9 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
       }).catch(function () { });
-      var ms = getMemories();
-      if (ms.length === 0) renderCards();
-      showToast('\u062E\u0627\u0637\u0631\u0647 \u062D\u0630\u0641 \u0634\u062f');
+      if (memories.length === 0) renderCards();
+      showToast('\u062E\u0627\u0637\u0631\u0647 \u062D\u0630\u0641 \u0634\u062F');
     }, 300);
   }
 
@@ -169,8 +193,18 @@ document.addEventListener('DOMContentLoaded', function () {
       updatePinDots();
       if (pinEntered.length === 4) {
         setTimeout(function () {
-          if (pinEntered === CORRECT_PIN) unlockPin();
-          else { pinLock.style.animation = 'shake 0.4s ease'; setTimeout(function() { pinLock.style.animation = ''; }, 400); }
+          if (pinEntered === CORRECT_PIN) {
+            unlockPin();
+          } else {
+            pinLock.style.animation = 'shake 0.4s ease';
+            pinError.style.opacity = '1';
+            setTimeout(function () {
+              pinLock.style.animation = '';
+              pinError.style.opacity = '0';
+              pinEntered = '';
+              updatePinDots();
+            }, 800);
+          }
         }, 150);
       }
     });
@@ -180,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key >= '0' && e.key <= '9') {
       var btn = document.querySelector('.pin-key[data-digit="' + e.key + '"]');
       if (btn) btn.click();
-    } else if (e.key === 'Backspace') {
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
       var del = document.querySelector('.pin-key[data-action="delete"]');
       if (del) del.click();
     }
@@ -197,6 +231,8 @@ document.addEventListener('DOMContentLoaded', function () {
     overlay.style.opacity = '1';
     overlay.style.pointerEvents = 'auto';
     document.body.style.overflow = 'hidden';
+    var input = drawer.querySelector('[name="title"]');
+    if (input) setTimeout(function () { input.focus(); }, 350);
   }
   function closeDrawer() {
     drawer.style.transform = 'translateY(100%)';
@@ -218,8 +254,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var now = new Date();
     var di = form.querySelector('[name="date"]');
     var ti = form.querySelector('[name="time"]');
-    if (di) di.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    if (ti) ti.value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    if (di) di.value = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+    if (ti) ti.value = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
   }
   resetFormDefaults();
 
@@ -279,10 +315,10 @@ document.addEventListener('DOMContentLoaded', function () {
     form.reset();
     selM = '';
     selS = '';
-    document.querySelectorAll('.chip.active').forEach(function (c) { c.classList.remove('active'); });
+    document.querySelectorAll('[data-mood].active').forEach(function (c) { c.classList.remove('active'); });
     resetFormDefaults();
     renderCards();
-    showToast('\u062E\u0627\u0637\u0631\u0647 \u062B\u0628\u062a \u0634\u062f');
+    showToast('\uD83E\uDD73  \u062E\u0627\u0637\u0631\u0647 \u062B\u0628\u062A \u0634\u062F');
   });
 
   // === SWIPE ===

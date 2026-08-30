@@ -277,11 +277,215 @@
   opacity: 1;
 }
 
-/* Memory card */
+/* =============================================== */
+/* Memory cards — RTL timeline                       */
+/* =============================================== */
+
+/* Timeline item wrapper (offsets card to clear the dot on the right) */
+.memory-item {
+  position: relative;
+  padding-right: 34px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: memoryIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes memoryIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dot sitting on the timeline line (line center = 19.5px from right) */
+.memory-item-dot {
+  position: absolute;
+  right: 15px;
+  top: 24px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12),
+              0 0 14px rgba(16, 185, 129, 0.45);
+  z-index: 1;
+}
+
+/* Glass panel */
 .memory-card {
-  @apply group-hover:shadow-2xl transition-shadow duration-300;
-  @apply rounded-2xl border border-white/[0.05] bg-white/[0.03] backdrop-blur-xl p-5;
+  position: relative;
+  border-radius: 18px;
+  padding: 14px 16px 15px;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.018) 55%, rgba(255, 255, 255, 0.035));
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045),
+              0 10px 28px rgba(0, 0, 0, 0.14);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
-.memory-card .memory-dot {
-  @apply absolute right-2 top-2 w-5 h-5 rounded-full bg-emerald-500/80 group-hover:opacity-100 transition-opacity duration-200;
+.memory-item:hover .memory-card {
+  border-color: rgba(16, 185, 129, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045),
+              0 14px 34px rgba(0, 0, 0, 0.2),
+              0 0 24px rgba(16, 185, 129, 0.06);
+  transform: translateY(-1px);
 }
+
+/* Header row: avatar · author · date · delete (RTL: right→left) */
+.memory-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.memory-card-avatar {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+              0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.memory-card-author {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.memory-card-spacer {
+  flex: 1;
+}
+
+.memory-card-date {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.38);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  direction: rtl;
+}
+
+.memory-card-del {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+.memory-card-del:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* Title + description */
+.memory-card-title {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.94);
+  line-height: 1.7;
+  word-break: break-word;
+}
+.memory-card-desc {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* Footer: song + mood pills */
+.memory-card-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.memory-song {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 100%;
+}
+.memory-song .audio-wave {
+  height: 11px;
+}
+.memory-song .audio-wave span {
+  background: #34d399;
+  opacity: 0.85;
+}
+.memory-song span.memory-song-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-card-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.memory-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.memory-tag--m {
+  background: rgba(16, 185, 129, 0.09);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+.memory-tag--s {
+  background: rgba(167, 139, 250, 0.09);
+  border-color: rgba(167, 139, 250, 0.2);
+  color: #c4b5fd;
+}
+
+/* Light mode */
+html.light .memory-card {
+  background: linear-gradient(165deg, #ffffff, rgba(255, 255, 255, 0.72));
+  border-color: rgba(0, 0, 0, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              0 10px 28px rgba(0, 0, 0, 0.05);
+}
+html.light .memory-item:hover .memory-card {
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              0 14px 34px rgba(0, 0, 0, 0.08);
+}
+html.light .memory-card-title { color: #27272a; }
+html.light .memory-card-desc { color: rgba(24, 24, 27, 0.55); }
+html.light .memory-card-date { color: rgba(24, 24, 27, 0.4); }
+html.light .memory-card-del { color: rgba(24, 24, 27, 0.25); }
+html.light .memory-card-del:hover { color: #dc2626; background: rgba(220, 38, 38, 0.08); }
+html.light .memory-song { color: rgba(24, 24, 27, 0.55); }
+html.light .memory-card-foot { border-top-color: rgba(0, 0, 0, 0.06); }
