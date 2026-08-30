@@ -39,28 +39,283 @@ import '../styles/global.css';
 
   <script is:inline>
   (function() {
+    var LS_KEY = 'ss-memories';
+
+    function getMemories() {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+      catch(e) { return []; }
+    }
+    function saveMemories(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+    function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+    function toast(msg, icon) {
+      var t = document.getElementById('toast');
+      if (!t) return;
+      t.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2500);
+    }
+
+    function escapeHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function toPer(s) {
+      return String(s).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
+    }
+
+    function formatJalali(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) d = new Date();
+      var gy = d.getFullYear(), gm = d.getMonth() + 1, gd = d.getDate();
+      var g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
+      var gy2 = gm > 2 ? gy + 1 : gy;
+      var days = 355666 + 365*gy + Math.floor((gy2+3)/4) - Math.floor((gy2+99)/100) + Math.floor((gy2+399)/400) + gd + g_d_m[gm-1];
+      var jy = -1595 + 33*Math.floor(days/12053); days %= 12053;
+      jy += 4*Math.floor(days/1461); days %= 1461;
+      if (days > 365) { jy += Math.floor((days-1)/365); days = (days-1)%365; }
+      var jm, jd;
+      if (days < 186) { jm = 1+Math.floor(days/31); jd = 1+days%31; }
+      else { jm = 7+Math.floor((days-186)/30); jd = 1+(days-186)%30; }
+      return toPer(d.getHours().toString().padStart(2,'0'))+':'+toPer(d.getMinutes().toString().padStart(2,'0'))+' - '+toPer(jy)+'/'+toPer(String(jm).padStart(2,'0'))+'/'+toPer(String(jd).padStart(2,'0'));
+    }
+
+    function renderCards(memories) {
+      var list = document.getElementById('timeline-list');
+      var empty = document.getElementById('timeline-empty');
+      if (!list) { console.error('timeline-list not found'); return; }
+      list.innerHTML = '';
+      if (!memories || memories.length === 0) {
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+      memories.sort(function(a,b) { return new Date(b.createdAt||b.date) - new Date(a.createdAt||a.date); });
+      memories.forEach(function(mem) {
+        var authorLabel = mem.author === 'mehrdad' ? 'ثبت توسط مهرداد' : 'ثبت توسط سوگل';
+        var authorColor = mem.author === 'mehrdad' ? 'text-neon-emerald/70' : 'text-purple-400/70';
+        var songHtml = mem.song ? '<div class="mt-3 inline-flex items-center gap-2 rounded-full bg-neon-emerald/[0.06] border border-neon-emerald/[0.12] px-3 py-1.5"><div class="audio-wave"><span></span><span></span><span></span><span></span><span></span></div><span class="text-xs text-neon-emerald/70">'+escapeHtml(mem.song)+'</span></div>' : '';
+        var moodHtml = '';
+        if (mem.mehrdadMood || mem.sogolMood) {
+          var pills = '';
+          if (mem.mehrdadMood) pills += '<span class="chip text-[11px]">'+escapeHtml(mem.mehrdadMood)+'</span>';
+          if (mem.sogolMood) pills += '<span class="chip text-[11px]">'+escapeHtml(mem.sogolMood)+'</span>';
+          moodHtml = '<div class="flex flex-wrap gap-2 mt-3">'+pills+'</div>';
+        }
+        var card = document.createElement('div');
+        card.className = 'gsap-stagger relative pr-11';
+        card.setAttribute('data-id', mem.id);
+        card.innerHTML =
+          '<div class="timeline-dot"></div>'+
+          '<div class="glass-card p-5 ml-0">'+
+            '<div class="flex items-center justify-between mb-3">'+
+              '<div class="flex items-center gap-2.5">'+
+                '<span class="text-[10px] font-medium text-white/30 bg-white/[0.04] rounded-md px-2 py-1 tracking-wider tabular-nums">'+formatJalali(mem.createdAt||mem.date)+'</span>'+
+                '<span class="text-[10px] font-medium '+authorColor+'">'+authorLabel+'</span>'+
+              '</div>'+
+              '<button type="button" data-delete-id="'+mem.id+'" class="relative w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200 active:scale-90">'+
+                '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'+
+                '<div class="absolute left-0 top-full mt-2 z-50 glass-card px-4 py-3 flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-200" data-confirm-for="'+mem.id+'" style="min-width:220px;">'+
+                  '<span class="text-xs text-white/60">حذف شود؟</span>'+
+                  '<button type="button" data-confirm-delete="'+mem.id+'" class="text-xs text-red-400 hover:text-red-300 font-medium px-2 py-1 rounded-lg hover:bg-red-400/[0.1] transition-all">بله</button>'+
+                  '<button type="button" data-cancel-delete="'+mem.id+'" class="text-xs text-white/40 hover:text-white/60 font-medium px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-all">خیر</button>'+
+                '</div>'+
+              '</button>'+
+            '</div>'+
+            '<h3 class="text-[15px] font-bold text-white/90 leading-relaxed mb-1.5">'+escapeHtml(mem.title)+'</h3>'+
+            '<p class="text-[13px] text-white/50 leading-[1.85]">'+escapeHtml(mem.description||'')+'</p>'+
+            songHtml+moodHtml+
+          '</div>';
+        list.appendChild(card);
+      });
+      if (window.gsap) {
+        gsap.from('.gsap-stagger', { y:30, opacity:0, duration:0.6, stagger:0.08, ease:'power3.out', clearProps:'all' });
+      }
+      wireDeleteButtons();
+    }
+
+    function wireDeleteButtons() {
+      document.querySelectorAll('[data-delete-id]').forEach(function(btn) {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          var id = this.getAttribute('data-delete-id');
+          var pop = document.querySelector('[data-confirm-for="'+id+'"]');
+          if (pop) { pop.classList.toggle('opacity-0'); pop.classList.toggle('pointer-events-none'); }
+        };
+      });
+      document.querySelectorAll('[data-confirm-delete]').forEach(function(btn) {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          var id = this.getAttribute('data-confirm-delete');
+          var memories = getMemories().filter(function(m) { return m.id !== id; });
+          saveMemories(memories);
+          fetch('/api/memories', { method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id}) }).catch(function(){});
+          var card = document.querySelector('[data-id="'+id+'"]');
+          if (card && window.gsap) {
+            gsap.to(card, { x:-50, opacity:0, height:0, padding:0, marginBottom:0, duration:0.4, ease:'power2.in', onComplete:function(){ card.remove(); } });
+          } else if (card) { card.remove(); }
+          toast('خاطره حذف شد','🗑️');
+        };
+      });
+      document.querySelectorAll('[data-cancel-delete]').forEach(function(btn) {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          var id = this.getAttribute('data-cancel-delete');
+          var pop = document.querySelector('[data-confirm-for="'+id+'"]');
+          if (pop) { pop.classList.add('opacity-0'); pop.classList.add('pointer-events-none'); }
+        };
+      });
+    }
+
+    function loadAndRender() {
+      var local = getMemories();
+      renderCards(local);
+      fetch('/api/memories').then(function(r) { if(r.ok) return r.json(); throw 0; }).then(function(server) {
+        if (server && server.length > 0) {
+          var ids = {}; local.forEach(function(m){ ids[m.id]=true; });
+          var merged = local.slice();
+          server.forEach(function(m){ if(!ids[m.id]) merged.push(m); });
+          saveMemories(merged);
+          renderCards(merged);
+        }
+      }).catch(function(){});
+    }
+
+    function openDrawer() {
+      var d = document.getElementById('memory-drawer');
+      var o = document.getElementById('drawer-overlay');
+      d.style.transform = 'translateY(0)';
+      o.style.opacity = '1';
+      o.classList.remove('pointer-events-none');
+      o.classList.add('pointer-events-auto');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      var d = document.getElementById('memory-drawer');
+      var o = document.getElementById('drawer-overlay');
+      d.style.transform = 'translateY(100%)';
+      o.style.opacity = '0';
+      o.classList.add('pointer-events-none');
+      o.classList.remove('pointer-events-auto');
+      document.body.style.overflow = '';
+    }
+    function setFormDefaults() {
+      var f = document.getElementById('memory-form');
+      if (!f) return;
+      var now = new Date();
+      var di = f.querySelector('[name="date"]');
+      var ti = f.querySelector('[name="time"]');
+      if (di) di.value = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+      if (ti) ti.value = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    }
+
     function showApp() {
       var el = document.getElementById('app-content');
       if (!el) return;
       el.style.opacity = '1';
       el.style.pointerEvents = 'auto';
-      if (window.gsap) {
-        gsap.from(el, { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' });
-      }
-      if (window.SafeSpace) {
-        window.SafeSpace.loadAndRender();
-      }
+      if (window.gsap) gsap.from(el, { opacity:0, y:20, duration:0.6, ease:'power3.out' });
+      loadAndRender();
     }
 
+    // --- INIT ---
     if (sessionStorage.getItem('ss-auth') === '1') {
       showApp();
     } else {
       window.addEventListener('pin-unlocked', showApp);
     }
 
-    var style = document.createElement('style');
-    style.textContent = 'html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); } html.light header h1 { color: #1c1917; } html.light header p { color: rgba(0,0,0,0.35); }';
-    document.head.appendChild(style);
+    // FAB + drawer
+    var fab = document.getElementById('fab-add');
+    var closeBtn = document.getElementById('drawer-close');
+    var overlay = document.getElementById('drawer-overlay');
+    if (fab) fab.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (overlay) overlay.addEventListener('click', closeDrawer);
+
+    // Mood chips
+    var selectedMehrdadMood = '';
+    var selectedSogolMood = '';
+    document.querySelectorAll('[data-mood]').forEach(function(chip) {
+      chip.addEventListener('click', function(e) {
+        e.preventDefault();
+        var type = this.getAttribute('data-mood');
+        var value = this.getAttribute('data-value');
+        this.parentElement.querySelectorAll('.chip').forEach(function(s){ s.classList.remove('active'); });
+        if (type === 'mehrdad') {
+          selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
+          if (selectedMehrdadMood) this.classList.add('active');
+        } else {
+          selectedSogolMood = selectedSogolMood === value ? '' : value;
+          if (selectedSogolMood) this.classList.add('active');
+        }
+      });
+    });
+
+    // Form submit
+    var form = document.getElementById('memory-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(form);
+        var dateVal = formData.get('date');
+        var timeVal = formData.get('time');
+        var memoryDate;
+        try {
+          if (dateVal && timeVal) memoryDate = new Date(dateVal+'T'+timeVal+':00');
+          else if (dateVal) memoryDate = new Date(dateVal+'T12:00:00');
+          else memoryDate = new Date();
+          if (isNaN(memoryDate.getTime())) memoryDate = new Date();
+        } catch(ex) { memoryDate = new Date(); }
+
+        var payload = {
+          id: genId(),
+          title: String(formData.get('title')||'').slice(0,120),
+          description: String(formData.get('description')||'').slice(0,1000),
+          song: formData.get('song') || null,
+          mehrdadMood: selectedMehrdadMood || null,
+          sogolMood: selectedSogolMood || null,
+          author: formData.get('author') === 'sogol' ? 'sogol' : 'mehrdad',
+          date: memoryDate.toISOString(),
+          createdAt: new Date().toISOString(),
+        };
+
+        var memories = getMemories();
+        memories.push(payload);
+        saveMemories(memories);
+
+        fetch('/api/memories', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
+          .then(function(r){ if(r.ok) return r.json(); throw 0; })
+          .then(function(saved){ var idx=memories.findIndex(function(m){return m.id===payload.id;}); if(idx!==-1){memories[idx]=saved;saveMemories(memories);} })
+          .catch(function(){});
+
+        closeDrawer();
+        form.reset();
+        selectedMehrdadMood = '';
+        selectedSogolMood = '';
+        document.querySelectorAll('.chip.active').forEach(function(c){ c.classList.remove('active'); });
+        setFormDefaults();
+        renderCards(getMemories());
+        toast('خاطره ثبت شد');
+      });
+    }
+
+    // Swipe handle
+    var handle = document.getElementById('drawer-handle');
+    if (handle) {
+      var startY = 0;
+      handle.addEventListener('touchstart', function(e){ startY=e.touches[0].clientY; }, {passive:true});
+      handle.addEventListener('touchmove', function(e){ if(e.touches[0].clientY-startY>80) closeDrawer(); }, {passive:true});
+    }
+
+    setFormDefaults();
+
+    // Light mode header
+    var s = document.createElement('style');
+    s.textContent = 'html.light header{background:rgba(250,250,249,0.8);border-color:rgba(0,0,0,0.06)}html.light header h1{color:#1c1917}html.light header p{color:rgba(0,0,0,0.35)}';
+    document.head.appendChild(s);
   })();
   </script>
 </Layout>
