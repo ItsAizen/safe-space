@@ -299,6 +299,25 @@
     toast: toast,
     saveMemories: saveMemories,
     genId: genId,
+    loadAndRender: function() {
+      var local = getMemories();
+      renderCards(local);
+      fetch('/api/memories').then(function(res) {
+        if (res.ok) return res.json();
+        throw new Error('no api');
+      }).then(function(serverMemories) {
+        if (serverMemories && serverMemories.length > 0) {
+          var localIds = {};
+          local.forEach(function(m) { localIds[m.id] = true; });
+          var merged = local.slice();
+          serverMemories.forEach(function(m) {
+            if (!localIds[m.id]) merged.push(m);
+          });
+          saveMemories(merged);
+          renderCards(merged);
+        }
+      }).catch(function() {});
+    },
   };
 
   function openDrawer() {

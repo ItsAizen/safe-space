@@ -36,54 +36,31 @@ import '../styles/global.css';
   </div>
 
   <AddMemoryModal />
-</Layout>
 
-<script is:inline>
-(function() {
-  var appContent = document.getElementById('app-content');
-
-  function showApp() {
-    appContent.style.opacity = '1';
-    appContent.style.pointerEvents = 'auto';
-    if (window.gsap) {
-      gsap.from(appContent, { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' });
-    }
-    loadAllMemories();
-  }
-
-  if (sessionStorage.getItem('ss-auth') === '1') {
-    showApp();
-  } else {
-    window.addEventListener('pin-unlocked', showApp);
-  }
-
-  function loadAllMemories() {
-    var ss = window.SafeSpace;
-    if (!ss) return;
-    var local = ss.getMemories();
-
-    fetch('/api/memories').then(function(res) {
-      if (res.ok) return res.json();
-      throw new Error('no api');
-    }).then(function(serverMemories) {
-      if (serverMemories && serverMemories.length > 0) {
-        var localIds = {};
-        local.forEach(function(m) { localIds[m.id] = true; });
-        var merged = local.slice();
-        serverMemories.forEach(function(m) {
-          if (!localIds[m.id]) merged.push(m);
-        });
-        ss.saveMemories(merged);
-        local = merged;
+  <script is:inline>
+  (function() {
+    function showApp() {
+      var el = document.getElementById('app-content');
+      if (!el) return;
+      el.style.opacity = '1';
+      el.style.pointerEvents = 'auto';
+      if (window.gsap) {
+        gsap.from(el, { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' });
       }
-      ss.renderCards(local);
-    }).catch(function() {
-      ss.renderCards(local);
-    });
-  }
+      if (window.SafeSpace) {
+        window.SafeSpace.loadAndRender();
+      }
+    }
 
-  var style = document.createElement('style');
-  style.textContent = 'html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); } html.light header h1 { color: #1c1917; } html.light header p { color: rgba(0,0,0,0.35); }';
-  document.head.appendChild(style);
-})();
-</script>
+    if (sessionStorage.getItem('ss-auth') === '1') {
+      showApp();
+    } else {
+      window.addEventListener('pin-unlocked', showApp);
+    }
+
+    var style = document.createElement('style');
+    style.textContent = 'html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); } html.light header h1 { color: #1c1917; } html.light header p { color: rgba(0,0,0,0.35); }';
+    document.head.appendChild(style);
+  })();
+  </script>
+</Layout>
