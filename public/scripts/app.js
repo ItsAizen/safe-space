@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
   var LS_KEY = 'ss-memories';
-  var CORRECT_PIN = '1234';
   var FA = '\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9';
   var trashSVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
 
@@ -140,87 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 300);
   }
 
-  // === SHOW APP ===
-  function showApp() {
-    var el = document.getElementById('app-content');
-    if (!el) return;
-    el.style.opacity = '1';
-    el.style.pointerEvents = 'auto';
-    renderCards();
-  }
-
-  // === PIN ===
-  var pinLock = document.getElementById('pin-lock');
-  var pinDots = document.querySelectorAll('.pin-dot');
-  var pinKeys = document.querySelectorAll('.pin-key');
-  var pinError = document.getElementById('pin-error');
-  var pinEntered = '';
-
-  function updatePinDots() {
-    pinDots.forEach(function (dot, i) {
-      if (i < pinEntered.length) {
-        dot.style.backgroundColor = '#10b981';
-        dot.style.borderColor = '#10b981';
-      } else {
-        dot.style.backgroundColor = 'transparent';
-        dot.style.borderColor = '';
-      }
-    });
-  }
-
-  function unlockPin() {
-    sessionStorage.setItem('ss-auth', '1');
-    pinLock.style.transition = 'opacity 0.3s ease';
-    pinLock.style.opacity = '0';
-    setTimeout(function () {
-      pinLock.style.display = 'none';
-      showApp();
-    }, 300);
-  }
-
-  pinKeys.forEach(function (key) {
-    key.addEventListener('click', function () {
-      var digit = this.getAttribute('data-digit');
-      var action = this.getAttribute('data-action');
-      if (action === 'delete') {
-        if (pinEntered.length > 0) {
-          pinEntered = pinEntered.slice(0, -1);
-          updatePinDots();
-        }
-        return;
-      }
-      if (!digit || pinEntered.length >= 4) return;
-      pinEntered += digit;
-      updatePinDots();
-      if (pinEntered.length === 4) {
-        setTimeout(function () {
-          if (pinEntered === CORRECT_PIN) {
-            unlockPin();
-          } else {
-            pinLock.style.animation = 'shake 0.4s ease';
-            pinError.style.opacity = '1';
-            setTimeout(function () {
-              pinLock.style.animation = '';
-              pinError.style.opacity = '0';
-              pinEntered = '';
-              updatePinDots();
-            }, 800);
-          }
-        }, 150);
-      }
-    });
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key >= '0' && e.key <= '9') {
-      var btn = document.querySelector('.pin-key[data-digit="' + e.key + '"]');
-      if (btn) btn.click();
-    } else if (e.key === 'Backspace' || e.key === 'Delete') {
-      var del = document.querySelector('.pin-key[data-action="delete"]');
-      if (del) del.click();
-    }
-  });
-
   // === DRAWER ===
   var fab = document.getElementById('fab-add');
   var drawer = document.getElementById('memory-drawer');
@@ -332,9 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   }
 
-  // === AUTH CHECK ===
-  if (sessionStorage.getItem('ss-auth') === '1') {
-    pinLock.style.display = 'none';
-    showApp();
-  }
+  // === INIT ===
+  renderCards();
 });

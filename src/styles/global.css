@@ -278,9 +278,6 @@ html.light {
 .app-header-title {
   color: rgba(255, 255, 255, 0.92);
 }
-.app-header-sub {
-  color: rgba(255, 255, 255, 0.3);
-}
 
 /* Header (light mode) */
 html.light .app-header {
@@ -290,9 +287,6 @@ html.light .app-header {
 }
 html.light .app-header-title {
   color: #18181b;
-}
-html.light .app-header-sub {
-  color: rgba(24, 24, 27, 0.5);
 }
 
 /* Toast notification */
@@ -521,24 +515,6 @@ html.light .memory-card-del { color: rgba(24, 24, 27, 0.25); }
 html.light .memory-card-del:hover { color: #dc2626; background: rgba(220, 38, 38, 0.08); }
 html.light .memory-song { color: rgba(24, 24, 27, 0.55); }
 html.light .memory-card-foot { border-top-color: rgba(0, 0, 0, 0.06); }
-
-/* =============================================== */
-/* Light mode: PIN screen                           */
-/* =============================================== */
-html.light #pin-lock .pin-scrim { background: rgba(250, 250, 249, 0.96); }
-html.light #pin-lock .auth-title { color: #18181b; }
-html.light #pin-lock .auth-sub { color: rgba(24, 24, 27, 0.5); }
-html.light #pin-lock .pin-dot { border-color: rgba(24, 24, 27, 0.25); }
-html.light #pin-lock .pin-key {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.06);
-  color: rgba(24, 24, 27, 0.9);
-}
-html.light #pin-lock .pin-key[data-action="delete"] {
-  background: transparent;
-  border-color: rgba(0, 0, 0, 0.1);
-  color: rgba(24, 24, 27, 0.4);
-}
 
 /* =============================================== */
 /* Light mode: timeline section                     */
