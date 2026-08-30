@@ -27,12 +27,10 @@
   <div class="relative bg-surface-dark-elevated rounded-t-3xl border-t border-glass-border max-h-[85dvh] flex flex-col overflow-hidden"
     style="box-shadow: 0 -8px 40px rgba(0,0,0,0.4);">
 
-    <!-- Handle bar -->
     <div class="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing" id="drawer-handle">
       <div class="w-10 h-1 rounded-full bg-white/15"></div>
     </div>
 
-    <!-- Header -->
     <div class="flex items-center justify-between px-6 pb-4 border-b border-white/[0.06]">
       <h3 class="text-base font-bold text-white/90">ثبت خاطره جدید</h3>
       <button id="drawer-close" type="button" class="btn-ghost w-8 h-8 flex items-center justify-center p-0 rounded-lg">
@@ -43,21 +41,17 @@
       </button>
     </div>
 
-    <!-- Form -->
     <form id="memory-form" class="flex-1 overflow-y-auto px-6 py-5 space-y-5" style="-webkit-overflow-scrolling:touch;">
-      <!-- Title -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">عنوان</label>
         <input type="text" name="title" required placeholder="عنوان خاطره..." class="input-field" maxlength="120" />
       </div>
 
-      <!-- Description -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">توضیحات</label>
         <textarea name="description" rows="3" placeholder="درباره این خاطره..." class="input-field resize-none" maxlength="1000"></textarea>
       </div>
 
-      <!-- Date & Time -->
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">تاریخ</label>
@@ -69,13 +63,11 @@
         </div>
       </div>
 
-      <!-- Song -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-1.5 block tracking-wider">آهنگ (اختیاری)</label>
         <input type="text" name="song" placeholder="نام آهنگ..." class="input-field" />
       </div>
 
-      <!-- Mehrdad's Mood -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت مهرداد</label>
         <div class="flex flex-wrap gap-2" id="mehrdad-moods">
@@ -88,7 +80,6 @@
         </div>
       </div>
 
-      <!-- Sogol's Mood -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">حالت سوگل</label>
         <div class="flex flex-wrap gap-2" id="sogol-moods">
@@ -101,7 +92,6 @@
         </div>
       </div>
 
-      <!-- Author selector -->
       <div>
         <label class="text-[11px] font-medium text-white/35 mb-2.5 block tracking-wider">ثبت توسط</label>
         <div class="flex gap-3" id="author-selector">
@@ -120,7 +110,6 @@
         </div>
       </div>
 
-      <!-- Submit button -->
       <button type="submit" id="submit-btn" class="btn-primary w-full py-3.5 text-sm mt-2">
         <span id="submit-text">ثبت خاطره</span>
         <div id="submit-spinner" class="hidden">
@@ -131,7 +120,6 @@
         </div>
       </button>
 
-      <!-- Bottom safe area -->
       <div class="h-4"></div>
     </form>
   </div>
@@ -139,44 +127,193 @@
 
 <script is:inline>
 (function() {
-  const LS_KEY = 'ss-memories';
+  var LS_KEY = 'ss-memories';
 
-  function getLocalMemories() {
-    try {
-      return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-    } catch { return []; }
+  function getMemories() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+    catch(e) { return []; }
   }
 
-  function setLocalMemories(memories) {
-    localStorage.setItem(LS_KEY, JSON.stringify(memories));
+  function saveMemories(arr) {
+    localStorage.setItem(LS_KEY, JSON.stringify(arr));
   }
 
-  function generateClientId() {
+  function genId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   }
 
+  function toast(msg, icon) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  function renderCards(memories) {
+    var list = document.getElementById('timeline-list');
+    var empty = document.getElementById('timeline-empty');
+    if (!list) return;
+    list.innerHTML = '';
+    if (!memories || memories.length === 0) {
+      if (empty) empty.classList.remove('hidden');
+      return;
+    }
+    if (empty) empty.classList.add('hidden');
+
+    memories.sort(function(a, b) {
+      return new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date);
+    });
+
+    memories.forEach(function(mem) {
+      var card = document.createElement('div');
+      card.className = 'gsap-stagger relative pr-11';
+      card.setAttribute('data-id', mem.id);
+
+      var authorLabel = mem.author === 'mehrdad' ? 'ثبت توسط مهرداد' : 'ثبت توسط سوگل';
+      var authorColor = mem.author === 'mehrdad' ? 'text-neon-emerald/70' : 'text-purple-400/70';
+
+      var songHtml = '';
+      if (mem.song) {
+        songHtml = '<div class="mt-3 inline-flex items-center gap-2 rounded-full bg-neon-emerald/[0.06] border border-neon-emerald/[0.12] px-3 py-1.5">' +
+          '<div class="audio-wave"><span></span><span></span><span></span><span></span><span></span></div>' +
+          '<span class="text-xs text-neon-emerald/70">' + escapeHtml(mem.song) + '</span></div>';
+      }
+
+      var moodHtml = '';
+      if (mem.mehrdadMood || mem.sogolMood) {
+        var pills = '';
+        if (mem.mehrdadMood) pills += '<span class="chip text-[11px]">' + escapeHtml(mem.mehrdadMood) + '</span>';
+        if (mem.sogolMood) pills += '<span class="chip text-[11px]">' + escapeHtml(mem.sogolMood) + '</span>';
+        moodHtml = '<div class="flex flex-wrap gap-2 mt-3">' + pills + '</div>';
+      }
+
+      card.innerHTML =
+        '<div class="timeline-dot"></div>' +
+        '<div class="glass-card p-5 ml-0">' +
+          '<div class="flex items-center justify-between mb-3">' +
+            '<div class="flex items-center gap-2.5">' +
+              '<span class="text-[10px] font-medium text-white/30 bg-white/[0.04] rounded-md px-2 py-1 tracking-wider tabular-nums">' + formatJalali(mem.createdAt || mem.date) + '</span>' +
+              '<span class="text-[10px] font-medium ' + authorColor + '">' + authorLabel + '</span>' +
+            '</div>' +
+            '<button type="button" data-delete-id="' + mem.id + '" class="relative w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200 active:scale-90">' +
+              '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
+              '<div class="absolute left-0 top-full mt-2 z-50 glass-card px-4 py-3 flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-200" data-confirm-for="' + mem.id + '" style="min-width:220px;">' +
+                '<span class="text-xs text-white/60">حذف شود؟</span>' +
+                '<button type="button" data-confirm-delete="' + mem.id + '" class="text-xs text-red-400 hover:text-red-300 font-medium px-2 py-1 rounded-lg hover:bg-red-400/[0.1] transition-all">بله</button>' +
+                '<button type="button" data-cancel-delete="' + mem.id + '" class="text-xs text-white/40 hover:text-white/60 font-medium px-2 py-1 rounded-lg hover:bg-white/[0.06] transition-all">خیر</button>' +
+              '</div>' +
+            '</button>' +
+          '</div>' +
+          '<h3 class="text-[15px] font-bold text-white/90 leading-relaxed mb-1.5">' + escapeHtml(mem.title) + '</h3>' +
+          '<p class="text-[13px] text-white/50 leading-[1.85]">' + escapeHtml(mem.description || '') + '</p>' +
+          songHtml + moodHtml +
+        '</div>';
+
+      list.appendChild(card);
+    });
+
+    if (window.gsap) {
+      gsap.from('.gsap-stagger', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.08,
+        ease: 'power3.out', clearProps: 'all',
+      });
+    }
+
+    wireDeleteButtons();
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function formatJalali(dateStr) {
+    var d = new Date(dateStr);
+    if (isNaN(d.getTime())) d = new Date();
+    var gy = d.getFullYear();
+    var gm = d.getMonth() + 1;
+    var gd = d.getDate();
+    var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    var gy2 = (gm > 2) ? (gy + 1) : gy;
+    var days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+    var jy = -1595 + (33 * Math.floor(days / 12053));
+    days %= 12053;
+    jy += 4 * Math.floor(days / 1461);
+    days %= 1461;
+    if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+    var jm, jd;
+    if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + (days % 31); }
+    else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + ((days - 186) % 30); }
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mm = String(d.getMinutes()).padStart(2, '0');
+    return toPer(hh) + ':' + toPer(mm) + ' - ' + toPer(jy) + '/' + toPer(String(jm).padStart(2, '0')) + '/' + toPer(String(jd).padStart(2, '0'));
+  }
+
+  function toPer(s) {
+    return String(s).replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
+  }
+
+  function wireDeleteButtons() {
+    document.querySelectorAll('[data-delete-id]').forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var id = this.getAttribute('data-delete-id');
+        var pop = document.querySelector('[data-confirm-for="' + id + '"]');
+        if (pop) { pop.classList.toggle('opacity-0'); pop.classList.toggle('pointer-events-none'); }
+      };
+    });
+    document.querySelectorAll('[data-confirm-delete]').forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var id = this.getAttribute('data-confirm-delete');
+        var memories = getMemories().filter(function(m) { return m.id !== id; });
+        saveMemories(memories);
+        fetch('/api/memories', {
+          method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id }),
+        }).catch(function() {});
+        var card = document.querySelector('[data-id="' + id + '"]');
+        if (card && window.gsap) {
+          gsap.to(card, { x: -50, opacity: 0, height: 0, padding: 0, marginBottom: 0, duration: 0.4, ease: 'power2.in',
+            onComplete: function() { card.remove(); }
+          });
+        } else if (card) { card.remove(); }
+        toast('خاطره حذف شد', '🗑️');
+      };
+    });
+    document.querySelectorAll('[data-cancel-delete]').forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var id = this.getAttribute('data-cancel-delete');
+        var pop = document.querySelector('[data-confirm-for="' + id + '"]');
+        if (pop) { pop.classList.add('opacity-0'); pop.classList.add('pointer-events-none'); }
+      };
+    });
+  }
+
+  window.SafeSpace = {
+    getMemories: getMemories,
+    renderCards: renderCards,
+    toast: toast,
+    saveMemories: saveMemories,
+    genId: genId,
+  };
+
   function openDrawer() {
-    const drawer = document.getElementById('memory-drawer');
-    const overlay = document.getElementById('drawer-overlay');
+    var drawer = document.getElementById('memory-drawer');
+    var overlay = document.getElementById('drawer-overlay');
     drawer.style.transform = 'translateY(0)';
     overlay.style.opacity = '1';
     overlay.classList.remove('pointer-events-none');
     overlay.classList.add('pointer-events-auto');
     document.body.style.overflow = 'hidden';
-
-    if (window.gsap) {
-      const inner = drawer.querySelector('div');
-      gsap.from(inner || drawer, {
-        y: 100,
-        duration: 0.5,
-        ease: 'power3.out',
-      });
-    }
   }
 
   function closeDrawer() {
-    const drawer = document.getElementById('memory-drawer');
-    const overlay = document.getElementById('drawer-overlay');
+    var drawer = document.getElementById('memory-drawer');
+    var overlay = document.getElementById('drawer-overlay');
     drawer.style.transform = 'translateY(100%)';
     overlay.style.opacity = '0';
     overlay.classList.add('pointer-events-none');
@@ -185,156 +322,101 @@
   }
 
   function setDefaults() {
-    const form = document.getElementById('memory-form');
-    const now = new Date();
-    const dateInput = form.querySelector('[name="date"]');
-    const timeInput = form.querySelector('[name="time"]');
-    if (dateInput) {
-      dateInput.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    }
-    if (timeInput) {
-      timeInput.value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-    }
-  }
-
-  function showToast(msg, icon) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-    toast.innerHTML = '<span>' + (icon || '✨') + '</span> ' + msg;
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 2500);
-  }
-
-  function init() {
-    var fab = document.getElementById('fab-add');
     var form = document.getElementById('memory-form');
-    var submitBtn = document.getElementById('submit-btn');
+    if (!form) return;
+    var now = new Date();
+    var di = form.querySelector('[name="date"]');
+    var ti = form.querySelector('[name="time"]');
+    if (di) di.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    if (ti) ti.value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+  }
+
+  var selectedMehrdadMood = '';
+  var selectedSogolMood = '';
+
+  document.getElementById('fab-add').addEventListener('click', openDrawer);
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  document.getElementById('drawer-overlay').addEventListener('click', closeDrawer);
+
+  document.querySelectorAll('[data-mood]').forEach(function(chip) {
+    chip.addEventListener('click', function(e) {
+      e.preventDefault();
+      var type = this.getAttribute('data-mood');
+      var value = this.getAttribute('data-value');
+      this.parentElement.querySelectorAll('.chip').forEach(function(s) { s.classList.remove('active'); });
+      if (type === 'mehrdad') {
+        selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
+        if (selectedMehrdadMood) this.classList.add('active');
+      } else {
+        selectedSogolMood = selectedSogolMood === value ? '' : value;
+        if (selectedSogolMood) this.classList.add('active');
+      }
+    });
+  });
+
+  document.getElementById('memory-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = e.target;
+    var formData = new FormData(form);
+    var dateVal = formData.get('date');
+    var timeVal = formData.get('time');
+    var memoryDate;
+
+    try {
+      if (dateVal && timeVal) memoryDate = new Date(dateVal + 'T' + timeVal + ':00');
+      else if (dateVal) memoryDate = new Date(dateVal + 'T12:00:00');
+      else memoryDate = new Date();
+      if (isNaN(memoryDate.getTime())) memoryDate = new Date();
+    } catch(ex) { memoryDate = new Date(); }
+
+    var payload = {
+      id: genId(),
+      title: String(formData.get('title') || '').slice(0, 120),
+      description: String(formData.get('description') || '').slice(0, 1000),
+      song: formData.get('song') || null,
+      mehrdadMood: selectedMehrdadMood || null,
+      sogolMood: selectedSogolMood || null,
+      author: formData.get('author') === 'sogol' ? 'sogol' : 'mehrdad',
+      date: memoryDate.toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+
     var submitText = document.getElementById('submit-text');
     var submitSpinner = document.getElementById('submit-spinner');
-    var closeBtn = document.getElementById('drawer-close');
-    var overlay = document.getElementById('drawer-overlay');
-    var selectedMehrdadMood = '';
-    var selectedSogolMood = '';
+    submitText.classList.add('hidden');
+    submitSpinner.classList.remove('hidden');
+    document.getElementById('submit-btn').disabled = true;
 
-    fab.addEventListener('click', openDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-    overlay.addEventListener('click', closeDrawer);
+    var memories = getMemories();
+    memories.push(payload);
+    saveMemories(memories);
 
-    document.querySelectorAll('[data-mood]').forEach(function(chip) {
-      chip.addEventListener('click', function(e) {
-        e.preventDefault();
-        var type = this.dataset.mood;
-        var value = this.dataset.value;
-        var siblings = this.parentElement.querySelectorAll('.chip');
-        siblings.forEach(function(s) { s.classList.remove('active'); });
+    fetch('/api/memories', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).then(function(res) {
+      if (res.ok) return res.json();
+      throw new Error('API error');
+    }).then(function(saved) {
+      var idx = memories.findIndex(function(m) { return m.id === payload.id; });
+      if (idx !== -1) { memories[idx] = saved; saveMemories(memories); }
+    }).catch(function() {});
 
-        if (type === 'mehrdad') {
-          selectedMehrdadMood = selectedMehrdadMood === value ? '' : value;
-          if (selectedMehrdadMood) this.classList.add('active');
-        } else {
-          selectedSogolMood = selectedSogolMood === value ? '' : value;
-          if (selectedSogolMood) this.classList.add('active');
-        }
-
-        if (window.gsap) {
-          gsap.fromTo(this, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(3)' });
-        }
-      });
-    });
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      var formData = new FormData(form);
-      var dateVal = formData.get('date');
-      var timeVal = formData.get('time');
-      var memoryDate;
-
-      try {
-        if (dateVal && timeVal) {
-          memoryDate = new Date(dateVal + 'T' + timeVal + ':00');
-        } else if (dateVal) {
-          memoryDate = new Date(dateVal + 'T12:00:00');
-        } else {
-          memoryDate = new Date();
-        }
-        if (isNaN(memoryDate.getTime())) memoryDate = new Date();
-      } catch(ex) {
-        memoryDate = new Date();
-      }
-
-      var payload = {
-        id: generateClientId(),
-        title: String(formData.get('title') || '').slice(0, 120),
-        description: String(formData.get('description') || '').slice(0, 1000),
-        song: formData.get('song') || null,
-        mehrdadMood: selectedMehrdadMood || null,
-        sogolMood: selectedSogolMood || null,
-        author: formData.get('author') === 'sogol' ? 'sogol' : 'mehrdad',
-        date: memoryDate.toISOString(),
-        createdAt: new Date().toISOString(),
-      };
-
-      submitText.classList.add('hidden');
-      submitSpinner.classList.remove('hidden');
-      submitBtn.disabled = true;
-
-      try {
-        var res = await fetch('/api/memories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-
-        if (res.ok) {
-          var saved = await res.json();
-          var memories = getLocalMemories();
-          memories.push(saved);
-          setLocalMemories(memories);
-
-          closeDrawer();
-          form.reset();
-          selectedMehrdadMood = '';
-          selectedSogolMood = '';
-          document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
-          setDefaults();
-
-          if (window.renderTimeline) window.renderTimeline(memories);
-          showToast('خاطره ثبت شد');
-        } else {
-          throw new Error('API error ' + res.status);
-        }
-      } catch (err) {
-        console.error('API save failed, using localStorage only:', err);
-
-        var memories = getLocalMemories();
-        memories.push(payload);
-        setLocalMemories(memories);
-
-        closeDrawer();
-        form.reset();
-        selectedMehrdadMood = '';
-        selectedSogolMood = '';
-        document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
-        setDefaults();
-
-        if (window.renderTimeline) window.renderTimeline(memories);
-        showToast('خاطره ذخیره شد (آفلاین)');
-      } finally {
-        submitText.classList.remove('hidden');
-        submitSpinner.classList.add('hidden');
-        submitBtn.disabled = false;
-      }
-    });
-
+    closeDrawer();
+    form.reset();
+    selectedMehrdadMood = '';
+    selectedSogolMood = '';
+    document.querySelectorAll('.chip.active').forEach(function(c) { c.classList.remove('active'); });
     setDefaults();
-  }
+    renderCards(getMemories());
+    toast('خاطره ثبت شد');
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+    submitText.classList.remove('hidden');
+    submitSpinner.classList.add('hidden');
+    document.getElementById('submit-btn').disabled = false;
+  });
+
+  setDefaults();
 
   var handle = document.getElementById('drawer-handle');
   var startY = 0;
@@ -342,9 +424,5 @@
   handle.addEventListener('touchmove', function(e) {
     if (e.touches[0].clientY - startY > 80) closeDrawer();
   }, { passive: true });
-
-  var style = document.createElement('style');
-  style.textContent = 'html.light #memory-drawer > div { background: #fafaf9; border-color: rgba(0,0,0,0.06); } html.light #memory-drawer .text-white\\/90 { color: #1c1917; } html.light #memory-drawer .text-white\\/35 { color: rgba(0,0,0,0.4); } html.light #memory-drawer .text-white\\/50 { color: rgba(0,0,0,0.5); } html.light #drawer-handle > div { background: rgba(0,0,0,0.12); } html.light #drawer-close { color: rgba(0,0,0,0.4); } html.light #fab-add { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }';
-  document.head.appendChild(style);
 })();
 </script>

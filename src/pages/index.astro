@@ -9,12 +9,9 @@ import '../styles/global.css';
 ---
 
 <Layout>
-  <!-- PIN Lock Screen -->
   <PinLock />
 
-  <!-- Main App Content (hidden until PIN unlock) -->
   <div id="app-content" class="flex flex-col min-h-dvh" style="opacity:0;pointer-events:none;">
-    <!-- Top Bar -->
     <header class="sticky top-0 z-30 backdrop-blur-xl bg-surface-dark/70 border-b border-glass-border">
       <div class="flex items-center justify-between px-5 h-14">
         <div class="flex items-center gap-2.5">
@@ -32,7 +29,6 @@ import '../styles/global.css';
       </div>
     </header>
 
-    <!-- Main Scrollable Content -->
     <main class="flex-1 px-4 pt-5 pb-28">
       <LiveCounter />
       <Timeline />
@@ -44,29 +40,15 @@ import '../styles/global.css';
 
 <script is:inline>
 (function() {
-  var LS_KEY = 'ss-memories';
   var appContent = document.getElementById('app-content');
-
-  function getLocalMemories() {
-    try {
-      return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-    } catch { return []; }
-  }
 
   function showApp() {
     appContent.style.opacity = '1';
     appContent.style.pointerEvents = 'auto';
-
     if (window.gsap) {
-      gsap.from(appContent, {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        ease: 'power3.out',
-      });
+      gsap.from(appContent, { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' });
     }
-
-    loadMemories();
+    loadAllMemories();
   }
 
   if (sessionStorage.getItem('ss-auth') === '1') {
@@ -75,36 +57,30 @@ import '../styles/global.css';
     window.addEventListener('pin-unlocked', showApp);
   }
 
-  window.showToast = function(message, icon) {
-    var toast = document.getElementById('toast');
-    if (!toast) return;
-    toast.innerHTML = '<span>' + (icon || '✨') + '</span> ' + message;
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 2500);
-  };
+  function loadAllMemories() {
+    var ss = window.SafeSpace;
+    if (!ss) return;
+    var local = ss.getMemories();
 
-  window.loadMemories = async function() {
-    var localMemories = getLocalMemories();
-
-    try {
-      var res = await fetch('/api/memories');
-      if (res.ok) {
-        var serverMemories = await res.json();
-        if (serverMemories && serverMemories.length > 0) {
-          var localIds = new Set(localMemories.map(function(m) { return m.id; }));
-          var newFromServer = serverMemories.filter(function(m) { return !localIds.has(m.id); });
-          if (newFromServer.length > 0) {
-            localMemories = localMemories.concat(newFromServer);
-            localStorage.setItem(LS_KEY, JSON.stringify(localMemories));
-          }
-        }
+    fetch('/api/memories').then(function(res) {
+      if (res.ok) return res.json();
+      throw new Error('no api');
+    }).then(function(serverMemories) {
+      if (serverMemories && serverMemories.length > 0) {
+        var localIds = {};
+        local.forEach(function(m) { localIds[m.id] = true; });
+        var merged = local.slice();
+        serverMemories.forEach(function(m) {
+          if (!localIds[m.id]) merged.push(m);
+        });
+        ss.saveMemories(merged);
+        local = merged;
       }
-    } catch (err) {
-      console.log('API unavailable, using localStorage');
-    }
-
-    if (window.renderTimeline) window.renderTimeline(localMemories);
-  };
+      ss.renderCards(local);
+    }).catch(function() {
+      ss.renderCards(local);
+    });
+  }
 
   var style = document.createElement('style');
   style.textContent = 'html.light header { background: rgba(250,250,249,0.8); border-color: rgba(0,0,0,0.06); } html.light header h1 { color: #1c1917; } html.light header p { color: rgba(0,0,0,0.35); }';
