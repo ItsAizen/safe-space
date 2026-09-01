@@ -3,18 +3,22 @@
 
 <section id="live-counter" class="counter-card">
   <div class="counter-orb"></div>
+  <div class="counter-orb-2"></div>
 
   <!-- Header -->
   <div class="counter-head">
     <span class="counter-live"></span>
     <span class="counter-head-label">فرکانس مشترک از ۱ شهریور ۱۴۰۵</span>
+    <span class="counter-live"></span>
   </div>
 
   <!-- Hero: the endless days total -->
   <div class="counter-hero">
-    <div class="counter-days">
-      <span id="counter-days">۰</span>
-      <small>روز</small>
+    <div class="counter-days-frame">
+      <div class="counter-days">
+        <span id="counter-days">۰</span>
+        <small>روز با هم</small>
+      </div>
     </div>
   </div>
 
@@ -40,12 +44,12 @@
   <div class="counter-wave">
     <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
-  <p class="counter-foot">هر ثانیه با هم</p>
+
+  <p class="counter-foot">هر ثانیه با هم، تا ابد</p>
 </section>
 
 <script is:inline>
 (function() {
-  // 1 Shahrivar 1405 = 2026-08-23T00:00:00+03:30 (Iran time)
   var MILESTONE = new Date('2026-08-23T00:00:00+03:30').getTime();
 
   var daysEl = document.getElementById('counter-days');
@@ -55,23 +59,21 @@
 
   if (!daysEl) return;
 
-  var prev = { h: '--', m: '--', s: '--' };
-
   function pad2(n) { return String(n).padStart(2, '0'); }
-  function toPer(s) { return s.replace(/\d/g, function(d) { return '\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669'[d]; }); }
+  function toPer(s) { return s.replace(/\d/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
   function fmt(v) { return toPer(pad2(v)); }
 
   function tick(el, value) {
     if (el.textContent !== value) {
       el.textContent = value;
       el.classList.remove('tick');
-      void el.offsetWidth; // restart animation
+      void el.offsetWidth;
       el.classList.add('tick');
     }
   }
 
   function countUp(el, target) {
-    var dur = 900;
+    var dur = 1200;
     var t0 = performance.now();
     function step(t) {
       var p = Math.min(1, (t - t0) / dur);
@@ -107,7 +109,6 @@
       hoursEl.textContent = fmt(hours);
       minutesEl.textContent = fmt(minutes);
       secondsEl.textContent = fmt(seconds);
-      prev = { h: fmt(hours), m: fmt(minutes), s: fmt(seconds) };
       firstRun = false;
     } else {
       tick(hoursEl, fmt(hours));
@@ -119,23 +120,30 @@
   update();
   setInterval(update, 1000);
 
-  // Entrance animation
   if (window.gsap) {
     var section = document.getElementById('live-counter');
     if (section) {
       gsap.from(section, {
-        y: 24,
+        y: 30,
         opacity: 0,
-        duration: 0.7,
+        duration: 0.8,
         ease: 'power3.out',
         delay: 0.15,
       });
-      gsap.from('.counter-days', {
-        scale: 0.88,
+      gsap.from('.counter-days-frame', {
+        scale: 0.8,
         opacity: 0,
-        duration: 0.7,
-        ease: 'back.out(1.6)',
-        delay: 0.35,
+        duration: 0.9,
+        ease: 'back.out(1.4)',
+        delay: 0.4,
+      });
+      gsap.from('.counter-chip', {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power2.out',
+        delay: 0.6,
       });
     }
   }
@@ -143,29 +151,38 @@
 </script>
 
 <style is:global>
-  /* === Live Counter card === */
   .counter-card {
     position: relative;
     overflow: hidden;
-    border-radius: 24px;
-    padding: 20px 20px 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018) 60%);
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05),
-                0 16px 40px rgba(0,0,0,0.16);
+    padding: 24px 20px 20px;
+    background: linear-gradient(180deg, rgba(26,21,48,0.95), rgba(19,16,42,0.98) 60%);
+    border: 3px solid rgba(255,255,255,0.08);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 0 40px rgba(190,24,93,0.06);
   }
 
   .counter-orb {
     position: absolute;
-    top: -90px;
-    left: -70px;
-    width: 220px;
-    height: 220px;
+    top: -80px;
+    left: -60px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(16,185,129,0.26), transparent 70%);
-    filter: blur(12px);
+    background: radial-gradient(circle, rgba(190,24,93,0.2), transparent 70%);
+    filter: blur(15px);
+    pointer-events: none;
+  }
+
+  .counter-orb-2 {
+    position: absolute;
+    bottom: -60px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%);
+    filter: blur(15px);
     pointer-events: none;
   }
 
@@ -174,7 +191,7 @@
     align-items: center;
     justify-content: center;
     gap: 9px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   .counter-head-label {
     font-size: 11px;
@@ -182,52 +199,63 @@
     color: rgba(255,255,255,0.45);
   }
   .counter-live {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #10b981;
+    width: 6px;
+    height: 6px;
+    background: #f472b6;
     animation: livePulse 1.6s ease-out infinite;
   }
   @keyframes livePulse {
-    0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-    70% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
-    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    0% { box-shadow: 0 0 0 0 rgba(244,114,182,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(244,114,182,0); }
+    100% { box-shadow: 0 0 0 0 rgba(244,114,182,0); }
   }
 
-  /* Hero: endless days total */
   .counter-hero {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px;
-    margin: 10px 0 18px;
+    height: 140px;
+    margin: 8px 0 16px;
   }
-  .counter-hero::before {
-    content: '';
-    position: absolute;
-    width: 170px;
-    height: 170px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 66%);
-    pointer-events: none;
+
+  .counter-days-frame {
+    position: relative;
+    z-index: 1;
+    padding: 16px 28px;
+    border: 2px solid rgba(244,114,182,0.15);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.25),
+                inset 0 0 30px rgba(244,114,182,0.04),
+                0 0 30px rgba(244,114,182,0.06);
+    animation: counterGlow 3s ease-in-out infinite;
+  }
+  @keyframes counterGlow {
+    0%, 100% {
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.25),
+                  inset 0 0 30px rgba(244,114,182,0.04),
+                  0 0 25px rgba(244,114,182,0.04);
+    }
+    50% {
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.25),
+                  inset 0 0 40px rgba(244,114,182,0.06),
+                  0 0 45px rgba(244,114,182,0.08);
+    }
   }
 
   .counter-days {
-    position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
   }
   .counter-days span {
-    font-size: 46px;
+    font-size: 52px;
     font-weight: 800;
     line-height: 1;
-    color: #34d399;
+    color: #f472b6;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 26px rgba(16,185,129,0.5);
+    text-shadow: 0 0 30px rgba(244,114,182,0.4),
+                 0 0 60px rgba(244,114,182,0.15);
   }
   .counter-days small {
     font-size: 11px;
@@ -235,21 +263,25 @@
     letter-spacing: 0.14em;
   }
 
-  /* Time chips */
   .counter-time {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
   }
   .counter-chip {
     flex: 1;
-    max-width: 100px;
-    padding: 12px 8px 10px;
+    max-width: 95px;
+    padding: 12px 6px 10px;
     text-align: center;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
+    border: 2px solid rgba(255,255,255,0.07);
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.25);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .counter-chip:hover {
+    border-color: rgba(244,114,182,0.25);
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.25), 0 0 12px rgba(244,114,182,0.06);
   }
   .counter-chip span {
     display: block;
@@ -277,35 +309,34 @@
     align-self: center;
     font-size: 18px;
     font-weight: 700;
-    color: rgba(16,185,129,0.65);
+    color: rgba(244,114,182,0.65);
     animation: colonBlink 1s step-end infinite;
   }
   @keyframes colonBlink {
     50% { opacity: 0.35; }
   }
 
-  /* Wave */
   .counter-wave {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 18px;
-    margin-top: 20px;
+    gap: 3px;
+    height: 20px;
+    margin-top: 18px;
   }
   .counter-wave span {
     width: 3px;
-    border-radius: 3px;
-    background: linear-gradient(180deg, #34d399, #059669);
+    border-radius: 0;
+    background: linear-gradient(180deg, #f472b6, #be185d);
     animation: waveBar 1.1s ease-in-out infinite;
   }
-  .counter-wave span:nth-child(1) { height: 45%; animation-delay: 0s; }
-  .counter-wave span:nth-child(2) { height: 75%; animation-delay: 0.12s; }
-  .counter-wave span:nth-child(3) { height: 55%; animation-delay: 0.24s; }
-  .counter-wave span:nth-child(4) { height: 90%; animation-delay: 0.36s; }
-  .counter-wave span:nth-child(5) { height: 60%; animation-delay: 0.48s; }
-  .counter-wave span:nth-child(6) { height: 80%; animation-delay: 0.6s; }
-  .counter-wave span:nth-child(7) { height: 40%; animation-delay: 0.72s; }
+  .counter-wave span:nth-child(1) { height: 40%; animation-delay: 0s; }
+  .counter-wave span:nth-child(2) { height: 65%; animation-delay: 0.1s; }
+  .counter-wave span:nth-child(3) { height: 50%; animation-delay: 0.2s; }
+  .counter-wave span:nth-child(4) { height: 80%; animation-delay: 0.3s; }
+  .counter-wave span:nth-child(5) { height: 55%; animation-delay: 0.4s; }
+  .counter-wave span:nth-child(6) { height: 70%; animation-delay: 0.5s; }
+  .counter-wave span:nth-child(7) { height: 45%; animation-delay: 0.6s; }
   @keyframes waveBar {
     0%, 100% { transform: scaleY(1); }
     50% { transform: scaleY(0.35); }
@@ -317,33 +348,5 @@
     font-size: 11px;
     letter-spacing: 0.12em;
     color: rgba(255,255,255,0.28);
-  }
-
-  /* === Light mode === */
-  html.light .counter-card {
-    background: linear-gradient(180deg, #ffffff, rgba(255,255,255,0.65));
-    border-color: rgba(0,0,0,0.07);
-    box-shadow: inset 0 1px 0 #fff,
-                0 16px 40px rgba(0,0,0,0.07);
-  }
-  html.light .counter-head-label { color: rgba(24,24,27,0.5); }
-  html.light .counter-days span {
-    color: #059669;
-    text-shadow: 0 0 22px rgba(16,185,129,0.3);
-  }
-  html.light .counter-days small { color: rgba(24,24,27,0.45); }
-  html.light .counter-hero::before {
-    background: radial-gradient(circle, rgba(16,185,129,0.12), transparent 66%);
-  }
-  html.light .counter-chip {
-    background: rgba(255,255,255,0.85);
-    border-color: rgba(0,0,0,0.06);
-    box-shadow: inset 0 1px 0 #fff, 0 2px 10px rgba(0,0,0,0.03);
-  }
-  html.light .counter-chip span { color: #27272a; }
-  html.light .counter-chip label { color: rgba(24,24,27,0.45); }
-  html.light .counter-foot { color: rgba(24,24,27,0.4); }
-  html.light .counter-orb {
-    background: radial-gradient(circle, rgba(16,185,129,0.18), transparent 70%);
   }
 </style>

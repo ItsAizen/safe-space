@@ -1,4 +1,4 @@
-const CACHE_NAME = 'safe-space-v1';
+const CACHE_NAME = 'safe-space-v2';
 const PRECACHE_URLS = [
   '/',
   '/manifest.webmanifest',

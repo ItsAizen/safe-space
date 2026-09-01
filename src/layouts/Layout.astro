@@ -15,7 +15,7 @@ const {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-  <meta name="theme-color" content="#090a0f" />
+  <meta name="theme-color" content="#0c0a1a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content={description} />
@@ -24,10 +24,10 @@ const {
   <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
   <title>{title}</title>
 </head>
-<body class="relative min-h-dvh overflow-x-hidden">
+<body class="relative min-h-dvh overflow-x-hidden pixel-grid">
   <!-- Ambient desktop glows -->
-  <div class="ambient-glow bg-neon-emerald/40 -top-40 -right-40 hidden lg:block" style="filter:blur(120px)"></div>
-  <div class="ambient-glow bg-neon-mint/30 bottom-20 -left-40 hidden lg:block" style="filter:blur(150px)"></div>
+  <div class="ambient-glow bg-rose-deep/40 -top-40 -right-40 hidden lg:block" style="filter:blur(120px)"></div>
+  <div class="ambient-glow bg-lavender-deep/30 bottom-20 -left-40 hidden lg:block" style="filter:blur(150px)"></div>
 
   <!-- Particle canvas -->
   <canvas id="particles-canvas"></canvas>
@@ -40,18 +40,7 @@ const {
   <!-- Toast container -->
   <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
-  <!-- Theme initialization (runs before paint) -->
-  <script is:inline>
-    (function() {
-      const saved = localStorage.getItem('ss-theme');
-      if (saved === 'light') {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      }
-    })();
-  </script>
-
-  <!-- Particles -->
+  <!-- Particles (pixel-style rose squares) -->
   <script is:inline>
     (function() {
       const canvas = document.getElementById('particles-canvas');
@@ -68,17 +57,18 @@ const {
 
       function createParticles() {
         particles = [];
-        const count = Math.floor((w * h) / 18000);
+        const count = Math.floor((w * h) / 20000);
         for (let i = 0; i < count; i++) {
           particles.push({
             x: Math.random() * w,
             y: Math.random() * h,
-            r: Math.random() * 1.5 + 0.3,
-            dx: (Math.random() - 0.5) * 0.3,
-            dy: (Math.random() - 0.5) * 0.2,
-            opacity: Math.random() * 0.3 + 0.05,
+            size: Math.random() * 3 + 1,
+            dx: (Math.random() - 0.5) * 0.25,
+            dy: (Math.random() - 0.5) * 0.15,
+            opacity: Math.random() * 0.25 + 0.03,
             pulse: Math.random() * Math.PI * 2,
-            pulseSpeed: Math.random() * 0.008 + 0.003,
+            pulseSpeed: Math.random() * 0.006 + 0.002,
+            isRose: Math.random() > 0.4,
           });
         }
       }
@@ -94,10 +84,10 @@ const {
           if (p.y < 0) p.y = h;
           if (p.y > h) p.y = 0;
           const alpha = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(16, 185, 129, ${alpha})`;
-          ctx.fill();
+          ctx.fillStyle = p.isRose
+            ? `rgba(244, 114, 182, ${alpha})`
+            : `rgba(196, 181, 253, ${alpha})`;
+          ctx.fillRect(Math.round(p.x), Math.round(p.y), Math.round(p.size), Math.round(p.size));
         }
         animFrame = requestAnimationFrame(draw);
       }

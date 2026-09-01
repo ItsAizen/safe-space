@@ -1,164 +1,194 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import LiveCounter from '../components/LiveCounter.astro';
 import '../styles/global.css';
 ---
 
-<Layout title="در حال تعمیر | Safe Space">
-  <header class="app-header sticky top-0 z-30 backdrop-blur-xl border-b">
+<Layout title="Safe Space | فضای امن مشترک">
+  <header class="app-header sticky top-0 z-30">
     <div class="flex items-center justify-between px-4 h-14">
       <div class="flex items-center gap-2.5">
-        <div class="w-7 h-7 rounded-lg bg-neon-emerald/10 border border-neon-emerald/20 flex items-center justify-center">
-          <svg class="w-3.5 h-3.5 text-neon-emerald" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <div class="w-7 h-7 flex items-center justify-center">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#f472b6"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
         <h1 class="app-header-title text-sm font-bold leading-none">Safe Space</h1>
       </div>
-      <ThemeToggle />
+      <button id="credits-btn" type="button" class="btn-ghost w-10 h-10 flex items-center justify-center rounded-none p-0" aria-label="درباره سازنده">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="#f472b6"/></svg>
+      </button>
     </div>
   </header>
 
-  <main class="fix-screen">
-    <div class="fix-card">
-      <div class="fix-stage" aria-hidden="true">
-        <div class="fix-zap fix-zap--a">💡</div>
-        <div class="fix-zap fix-zap--b">🔧</div>
-        <span class="fix-bin">🗑️</span>
-        <span class="fix-spark">✨</span>
-      </div>
+  <main class="flex-1 px-4 pb-28">
+    <LiveCounter />
 
-      <p class="fix-msg">ایده جانک بود، مث تمام جانکا پرت شد سطل آشغال :)</p>
-
-      <div class="fix-dots">
-        <span></span><span></span><span></span>
-      </div>
+    <!-- Clean divider -->
+    <div class="flex items-center gap-3 my-8 px-1">
+      <div class="flex-1 h-px" style="background:linear-gradient(90deg,transparent,rgba(244,114,182,0.2),transparent)"></div>
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#f472b6" opacity="0.4"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <div class="flex-1 h-px" style="background:linear-gradient(90deg,transparent,rgba(244,114,182,0.2),transparent)"></div>
     </div>
+
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <h2 class="section-title">خاطره‌های مشترک</h2>
+        <div class="section-rule flex-1 h-[2px]"></div>
+      </div>
+
+      <div id="timeline-empty" class="py-16 text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 mb-5" style="border:3px solid rgba(244,114,182,0.15);box-shadow:4px 4px 0px rgba(0,0,0,0.25);background:rgba(244,114,182,0.03)">
+          <svg class="w-9 h-9" style="color:rgba(244,114,182,0.3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+        </div>
+        <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:6px">هنوز خاطره‌ای ثبت نشده</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:12px">اولین خاطره‌تون رو ثبت کنید</p>
+      </div>
+
+      <div id="timeline-list" class="relative space-y-5" style="padding-top:12px"></div>
+    </section>
   </main>
+
+  <!-- FAB -->
+  <button id="fab-add" type="button" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 w-14 h-14 flex items-center justify-center text-white text-2xl font-bold" style="background:linear-gradient(135deg,#be185d,#7c3aed);border:3px solid rgba(255,255,255,0.2);box-shadow:4px 4px 0px rgba(0,0,0,0.4),0 0 30px rgba(190,24,93,0.2)" aria-label="اضافه خاطره">
+    +
+  </button>
+
+  <div id="drawer-overlay" class="overlay" style="opacity:0;pointer-events:none"></div>
+
+  <!-- Add Memory Drawer -->
+  <div id="memory-drawer" class="drawer-panel fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto" style="transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);background:#13102a;border-top:3px solid rgba(255,255,255,0.08)">
+    <div id="drawer-handle" class="flex justify-center pt-3 pb-2 cursor-grab">
+      <div class="w-10 h-1 rounded-full" style="background:rgba(255,255,255,0.15)"></div>
+    </div>
+
+    <div class="px-5 pb-8">
+      <div class="flex items-center justify-between mb-5" style="border-bottom:2px solid rgba(255,255,255,0.06);padding-bottom:12px">
+        <h3 class="text-base font-bold" style="color:rgba(255,255,255,0.9)">خاطره جدید</h3>
+        <button id="drawer-close" type="button" class="w-8 h-8 flex items-center justify-center text-xl" style="color:rgba(255,255,255,0.4)" aria-label="بستن">×</button>
+      </div>
+
+      <form id="memory-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">نویسنده</label>
+          <div class="flex gap-2">
+            <label class="author-option flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium cursor-pointer transition-all" style="border:2px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.5)">
+              <input type="radio" name="author" value="mehrdad" checked class="sr-only" />
+              <img src="/mehrdad.jpg" class="w-5 h-5 rounded-full object-cover" style="border:1px solid rgba(255,255,255,0.1)" alt="" />
+              مهرداد
+            </label>
+            <label class="author-option flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium cursor-pointer transition-all" style="border:2px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.5)">
+              <input type="radio" name="author" value="sogol" class="sr-only" />
+              <img src="/sogol.jpg" class="w-5 h-5 rounded-full object-cover" style="border:1px solid rgba(255,255,255,0.1)" alt="" />
+              سوگل
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">عنوان</label>
+          <input name="title" type="text" maxlength="120" required class="input-field" placeholder="یک عنوان زیبا بگذارید..." />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">توضیحات</label>
+          <textarea name="description" maxlength="1000" rows="3" class="input-field resize-none" placeholder="چی گذشت امروز؟"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">آهنگ (اختیاری)</label>
+          <input name="song" type="text" maxlength="200" class="input-field" placeholder="نام آهنگ..." />
+        </div>
+
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">تاریخ</label>
+            <input name="date" type="date" class="input-field" />
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-medium mb-2" style="color:rgba(255,255,255,0.35)">ساعت</label>
+            <input name="time" type="time" class="input-field" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(244,114,182,0.6)">حال مهرداد</label>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-mood="mehrdad" data-value="خوشحال" class="chip">خوشحال</button>
+            <button type="button" data-mood="mehrdad" data-value="نه خوب نه بد" class="chip">نه خوب نه بد</button>
+            <button type="button" data-mood="mehrdad" data-value="انرژی شدید بالا" class="chip">انرژی شدید بالا</button>
+            <button type="button" data-mood="mehrdad" data-value="نیازمند میک‌لاو" class="chip">نیازمند میک‌لاو</button>
+            <button type="button" data-mood="mehrdad" data-value="پریود ذهنی" class="chip">پریود ذهنی</button>
+            <button type="button" data-mood="mehrdad" data-value="یکم ناراحتٓٓ" class="chip">یکم ناراحتٓٓ</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium mb-2" style="color:rgba(196,181,253,0.6)">حال سوگل</label>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-mood="sogol" data-value="خوشحال" class="chip">خوشحال</button>
+            <button type="button" data-mood="sogol" data-value="نه خوب نه بد" class="chip">نه خوب نه بد</button>
+            <button type="button" data-mood="sogol" data-value="انرژی شدید بالا" class="chip">انرژی شدید بالا</button>
+            <button type="button" data-mood="sogol" data-value="نیازمند میک‌لاو" class="chip">نیازمند میک‌لاو</button>
+            <button type="button" data-mood="sogol" data-value="پریود ذهنی" class="chip">پریود ذهنی</button>
+            <button type="button" data-mood="sogol" data-value="یکم ناراحتٓٓ" class="chip">یکم ناراحتٓٓ</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full text-center mt-2">
+          ثبت خاطره
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Credits Modal -->
+  <div id="credits-overlay" class="overlay" style="opacity:0;pointer-events:none;z-index:60"></div>
+  <div id="credits-modal" class="fixed z-[70] left-1/2 top-1/2 w-[90%] max-w-[340px] p-6 text-center" style="transform:translate(-50%, -50%) scale(0.9);opacity:0;pointer-events:none;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);background:#1a1530;border:3px solid rgba(244,114,182,0.2);box-shadow:4px 4px 0px rgba(0,0,0,0.4),0 0 40px rgba(190,24,93,0.1)">
+    <div class="mb-4">
+      <img src="/mehrdad.jpg" class="w-16 h-16 rounded-full mx-auto object-cover" style="border:3px solid rgba(244,114,182,0.3);box-shadow:0 0 20px rgba(190,24,93,0.15)" alt="مهرداد" />
+    </div>
+
+    <p class="text-sm leading-loose" style="color:rgba(255,255,255,0.85)">
+      ساخته شده با ♥ توسط مهرداد برای دخترم، سوگلی.
+    </p>
+
+    <div class="flex items-center justify-center gap-3 my-4">
+      <img src="/mehrdad.jpg" class="w-6 h-6 rounded-full object-cover" style="border:2px solid rgba(244,114,182,0.3)" alt="" />
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="#f472b6" opacity="0.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <img src="/sogol.jpg" class="w-6 h-6 rounded-full object-cover" style="border:2px solid rgba(124,58,237,0.3)" alt="" />
+    </div>
+
+    <div class="mt-5 flex justify-center">
+      <button id="credits-close" type="button" class="btn-primary px-6 py-2 text-sm" style="background:linear-gradient(135deg,#be185d,#7c3aed)">
+        دوست دارم :)
+      </button>
+    </div>
+  </div>
 </Layout>
 
-<style is:global>
-  .fix-screen {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
+<script is:inline src="/scripts/app.js"></script>
 
-  .fix-card {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 28px;
-    padding: 40px 26px 32px;
-    text-align: center;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02) 60%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                0 16px 40px rgba(0, 0, 0, 0.16);
-  }
-
-  .fix-stage {
-    position: relative;
-    width: 112px;
-    height: 112px;
-    margin: 0 auto 22px;
-  }
-  .fix-bin {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 62px;
-    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
-    animation: binJiggle 2.4s ease-in-out infinite;
-  }
-  @keyframes binJiggle {
-    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-    42% { transform: translate(-50%, -50%) rotate(-7deg); }
-    44% { transform: translate(-50%, -50%) rotate(8deg); }
-    46% { transform: translate(-50%, -50%) rotate(-5deg); }
-    50% { transform: translate(-50%, -52%); }
-  }
-
-  .fix-zap {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-  }
-  .fix-zap--a {
-    top: 2px;
-    left: 18px;
-    transform-origin: 70% 90%;
-    animation: zapSpin 2.4s ease-in-out infinite;
-  }
-  .fix-zap--b {
-    top: 44px;
-    left: 6px;
-    animation: bob 1.6s ease-in-out infinite;
-  }
-  @keyframes zapSpin {
-    0% { transform: rotate(0deg); opacity: 0; }
-    18% { opacity: 1; transform: rotate(0deg); }
-    55% { opacity: 1; }
-    70% { transform: rotate(320deg); opacity: 0; }
-    100% { transform: rotate(320deg); opacity: 0; }
-  }
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-7px); }
-  }
-
-  .fix-spark {
-    position: absolute;
-    right: 8px;
-    bottom: 16px;
-    font-size: 18px;
-    animation: sparkBlink 1.2s ease-in-out infinite;
-  }
-  @keyframes sparkBlink {
-    0%, 100% { opacity: 0.15; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.15); }
-  }
-
-  .fix-msg {
-    margin: 18px 0 8px;
-    font-size: 17px;
-    font-weight: 800;
-    line-height: 1.9;
-    color: rgba(255, 255, 255, 0.92);
-  }
-  .fix-dots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 24px;
-  }
-  .fix-dots span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(16, 185, 129, 0.55);
-    animation: dotBounce 1.2s ease-in-out infinite;
-  }
-  .fix-dots span:nth-child(2) { animation-delay: 0.15s; }
-  .fix-dots span:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes dotBounce {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-6px); opacity: 1; }
-  }
-
-  /* Light mode */
-  html.light .fix-card {
-    background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.65));
-    border-color: rgba(0, 0, 0, 0.07);
-    box-shadow: inset 0 1px 0 #fff,
-                0 16px 40px rgba(0, 0, 0, 0.07);
-  }
-  html.light .fix-msg { color: #18181b; }
-</style>
+<script is:inline>
+  (function() {
+    var form = document.getElementById('memory-form');
+    if (!form) return;
+    var authorRadios = form.querySelectorAll('[name="author"]');
+    function updateAuthorStyle() {
+      authorRadios.forEach(function(r) {
+        var label = r.closest('label');
+        if (!label) return;
+        if (r.checked) {
+          var isM = r.value === 'mehrdad';
+          label.style.borderColor = isM ? 'rgba(190,24,93,0.5)' : 'rgba(124,58,237,0.5)';
+          label.style.background = isM ? 'rgba(190,24,93,0.08)' : 'rgba(124,58,237,0.08)';
+          label.style.color = isM ? '#f9a8d4' : '#c4b5fd';
+        } else {
+          label.style.borderColor = 'rgba(255,255,255,0.08)';
+          label.style.background = 'rgba(255,255,255,0.03)';
+          label.style.color = 'rgba(255,255,255,0.5)';
+        }
+      });
+    }
+    authorRadios.forEach(function(r) { r.addEventListener('change', updateAuthorStyle); });
+    updateAuthorStyle();
+  })();
+</script>

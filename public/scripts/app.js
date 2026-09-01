@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
   var LS_KEY = 'ss-memories';
-  var FA = '\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9';
+  var FA = '۰۱۲۳۴۵۶۷۸۹';
   var trashSVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
 
+  var syncInterval = null;
 
   function getMemories() {
     try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { return []; }
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function formatCardDate(dateStr) {
     var d = new Date(dateStr);
     if (isNaN(d.getTime())) d = new Date();
-    return formatJalali(d) + '  \u2022  ' + faNum(pad2(d.getHours())) + ':' + faNum(pad2(d.getMinutes()));
+    return formatJalali(d) + '  •  ' + faNum(pad2(d.getHours())) + ':' + faNum(pad2(d.getMinutes()));
   }
 
   function showToast(msg) {
@@ -46,7 +47,32 @@ document.addEventListener('DOMContentLoaded', function () {
     t._hide = setTimeout(function () { t.classList.remove('show'); }, 2500);
   }
 
-  // === CARD BUILDER ===
+  function fetchMemories() {
+    return fetch('/api/memories')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (Array.isArray(data) && data.length > 0) {
+          var local = getMemories();
+          var merged = mergeMemories(data, local);
+          saveMemories(merged);
+          return merged;
+        }
+        return getMemories();
+      })
+      .catch(function () { return getMemories(); });
+  }
+
+  function mergeMemories(apiArr, localArr) {
+    var map = {};
+    apiArr.forEach(function (m) { map[m.id] = m; });
+    localArr.forEach(function (m) {
+      if (!map[m.id]) {
+        map[m.id] = m;
+      }
+    });
+    return Object.values(map);
+  }
+
   function songHTML(song) {
     return '<div class="memory-song"><div class="audio-wave"><span></span><span></span><span></span><span></span><span></span></div><span class="memory-song-name">' + esc(song) + '</span></div>';
   }
@@ -57,10 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function buildCard(m, idx) {
     var isM = m.author === 'mehrdad';
-    var name = isM ? '\u0645\u0647\u0631\u062F\u0627\u062F' : '\u0633\u0648\u06AF\u0644';
-    var initial = isM ? '\u0645' : '\u0633';
-    var avatar = isM ? '#10b981,#059669' : '#a78bfa,#8b5cf6';
-    var accent = isM ? '#34d399' : '#c4b5fd';
+    var name = isM ? 'مهرداد' : 'سوگل';
+    var photo = isM ? '/mehrdad.jpg' : '/sogol.jpg';
+    var accent = isM ? '#f472b6' : '#c4b5fd';
 
     var desc = m.description ? '<p class="memory-card-desc">' + esc(m.description) + '</p>' : '';
 
@@ -77,11 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
       '<span class="memory-item-dot" style="background:' + accent + ';box-shadow:0 0 0 3px rgba(0,0,0,0.06),0 0 14px ' + accent + '66"></span>' +
       '<div class="memory-card">' +
         '<header class="memory-card-head">' +
-          '<span class="memory-card-avatar" style="background:linear-gradient(135deg,' + avatar + ')">' + initial + '</span>' +
+          '<img class="memory-card-avatar" src="' + photo + '" alt="' + name + '" />' +
           '<span class="memory-card-author" style="color:' + accent + '">' + name + '</span>' +
           '<span class="memory-card-spacer"></span>' +
           '<time class="memory-card-date">' + formatCardDate(m.date || m.createdAt) + '</time>' +
-          '<button type="button" class="memory-card-del" data-del="' + m.id + '" aria-label="\u062D\u0630\u0641 \u062E\u0627\u0637\u0631\u0647">' + trashSVG + '</button>' +
+          '<button type="button" class="memory-card-del" data-del="' + m.id + '" aria-label="حذف خاطره">' + trashSVG + '</button>' +
         '</header>' +
         '<h3 class="memory-card-title">' + esc(m.title) + '</h3>' +
         desc +
@@ -135,11 +160,10 @@ document.addEventListener('DOMContentLoaded', function () {
         body: JSON.stringify({ id: id })
       }).catch(function () { });
       if (memories.length === 0) renderCards();
-      showToast('\u062E\u0627\u0637\u0631\u0647 \u062D\u0630\u0641 \u0634\u062F');
+      showToast('خاطره حذف شد');
     }, 300);
   }
 
-  // === DRAWER ===
   var fab = document.getElementById('fab-add');
   var drawer = document.getElementById('memory-drawer');
   var overlay = document.getElementById('drawer-overlay');
@@ -164,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
   if (overlay) overlay.addEventListener('click', closeDrawer);
 
-  // === FORM ===
   var form = document.getElementById('memory-form');
   var selM = '';
   var selS = '';
@@ -193,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault();
     var fd = new FormData(form);
     var title = String(fd.get('title') || '').trim();
-    if (!title) title = '\u062E\u0627\u0637\u0631\u0647 \u062C\u062F\u06CC\u062F';
+    if (!title) title = 'خاطره جدید';
     var desc = String(fd.get('description') || '').trim();
     var author = fd.get('author') || 'mehrdad';
     var song = String(fd.get('song') || '').trim() || null;
@@ -237,10 +260,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-mood].active').forEach(function (c) { c.classList.remove('active'); });
     resetFormDefaults();
     renderCards();
-    showToast('\uD83E\uDD73  \u062E\u0627\u0637\u0631\u0647 \u062B\u0628\u062A \u0634\u062F');
+    showToast(' خاطره ثبت شد');
   });
 
-  // === SWIPE ===
   var handle = document.getElementById('drawer-handle');
   if (handle) {
     var startY = 0;
@@ -250,6 +272,44 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   }
 
-  // === INIT ===
-  renderCards();
+  var creditsBtn = document.getElementById('credits-btn');
+  var creditsModal = document.getElementById('credits-modal');
+  var creditsOverlay = document.getElementById('credits-overlay');
+  var creditsClose = document.getElementById('credits-close');
+
+  function openCredits() {
+    creditsModal.style.opacity = '1';
+    creditsModal.style.pointerEvents = 'auto';
+    creditsModal.style.transform = 'translate(-50%, -50%) scale(1)';
+    creditsOverlay.style.opacity = '1';
+    creditsOverlay.style.pointerEvents = 'auto';
+  }
+  function closeCredits() {
+    creditsModal.style.opacity = '0';
+    creditsModal.style.pointerEvents = 'none';
+    creditsModal.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    creditsOverlay.style.opacity = '0';
+    creditsOverlay.style.pointerEvents = 'none';
+  }
+
+  if (creditsBtn) creditsBtn.addEventListener('click', openCredits);
+  if (creditsClose) creditsClose.addEventListener('click', closeCredits);
+  if (creditsOverlay) creditsOverlay.addEventListener('click', closeCredits);
+
+  function startSync() {
+    syncInterval = setInterval(function () {
+      fetchMemories().then(function () { renderCards(); });
+    }, 15000);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) {
+      fetchMemories().then(function () { renderCards(); });
+    }
+  });
+
+  fetchMemories().then(function () {
+    renderCards();
+    startSync();
+  });
 });
